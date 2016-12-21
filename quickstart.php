@@ -94,36 +94,65 @@ $values = $response->getValues();
 		$person ['name']= $info[$Cfn] . ' ' . $info[$Cln];
 		$person ['grade'] = $info[$Cgrade];
 		$person ['events'] = explode (", " , $info[$Cevents]);
+		$person ['numevents'] = count ($person ['events']);
 		$ppl[$info[$Cfn] . ' ' . $info[$Cln]] = $person; 
 	}
 
-	 echo json_encode ($ppl);    // $ppl[$name][$info]
+//	 echo json_encode ($ppl);    // $ppl[$name][$info]
 	
 $range = 'events!A1:B';
 $response = $service->spreadsheets_values->get($spreadsheetId, $range);
 $values = $response->getValues();
 
+$countins = 0; 
+$countevents = 0; 
+
 $blocks = array ();
 for ($i = 2 ; $i < count ($values); $i++){
 	
-	if (isset ($values [$i][0])){
+	if (isset ($values [$i][0]) && $values [$i][0]!=''){
 		$time = $values[$i][0];
 	
 		$k = $i - 1;
 		do{
 			$k++;
 		}
-		while ( isset ($values[$k]) && isset ($values[$k][0]));
+		while ( isset ($values[$k]) && isset ($values[$k][0]) );
 		
-		$eventsAtTime = array ();
+		$events = array ();
 		for ($p = $i ; $p<$k; $p++){
-			$eventsAtTime[] = $values [$p][1];
+			$event = $values [$p][1];
+			// echo "\n". $event. ' : ';
+			$countevents++;
+			
+			$competitors = array ();
+		 
+			foreach ($ppl as $person){
+				if (in_array ( $event, $person ['events'] )){
+					// echo ' in ';
+					$countins++;
+					$competitors [] = $person;
+				}
+			 
+			}
+
+			$events[$event]['competitors'] = $competitors; 
+			$events[$event]['numcompetitors'] = count ($competitors);
 		}
 		
-		echo $time;
-		$blocks [$time] = $eventsAtTime;
+		$blocks [$time] = $events;
 	}
 }
+   // $blocks [$time][$event][$person (key is name)][$info e.g events, event count, name, grade]
+   
+   
+echo json_encode ($blocks, JSON_PRETTY_PRINT);
+echo "\n";
+echo 'TOTAL EVENT REQUESTS: ' . $countins. "\n";
+echo 'TOTAL PEOPLE: ' . count ($ppl). "\n";
+echo 'TOTAL EVENTS: ' . $countevents;
 
- echo json_encode ($blocks);  // $blocks [$time][$event][$people]
+
+ 
+ 
 
