@@ -265,10 +265,13 @@ for ($i = 2 ; $i < count ($values); $i++){
    // $blocks [$time][$event][$person (key is name)][$info e.g events, event count, name, grade]
    
    
-echo json_encode ($blocks, JSON_PRETTY_PRINT);
+echo '<pre>'.json_encode ($blocks, JSON_PRETTY_PRINT);
 echo json_encode ($okeyblocks, JSON_PRETTY_PRINT);
 echo json_encode ($dokeyblocks, JSON_PRETTY_PRINT);
 echo "\n";
 echo 'TOTAL EVENT REQUESTS: ' . $countins. "\n";
 echo 'TOTAL PEOPLE: ' . count ($ppl). "\n";
-echo 'TOTAL EVENTS: ' . $countevents;
+echo 'TOTAL EVENTS: ' . $countevents . '</pre>';
+
+?>
+
