@@ -54,6 +54,7 @@ function getClient() {
     $client->fetchAccessTokenWithRefreshToken($client->getRefreshToken());
     file_put_contents($credentialsPath, json_encode($client->getAccessToken()));
   }
+
   return $client;
 }
 
@@ -110,6 +111,7 @@ $countevents = 0;
 $blocks = array ();
 for ($i = 2 ; $i < count ($values); $i++){
 	
+	// time slots
 	if (isset ($values [$i][0]) && $values [$i][0]!=''){
 		$time = $values[$i][0];
 	
@@ -133,7 +135,6 @@ for ($i = 2 ; $i < count ($values); $i++){
 					$countins++;
 					$competitors [] = $person;
 				}
-			 
 			}
 
 			$events[$event]['competitors'] = $competitors; 
@@ -141,12 +142,13 @@ for ($i = 2 ; $i < count ($values); $i++){
 		}
 		
 		$blocks [$time] = $events;
+		echo "\n";
 	}
 }
    // $blocks [$time][$event][$person (key is name)][$info e.g events, event count, name, grade]
    
    
-echo json_encode ($blocks, JSON_PRETTY_PRINT);
+//echo json_encode ($blocks, JSON_PRETTY_PRINT);
 echo "\n";
 echo 'TOTAL EVENT REQUESTS: ' . $countins. "\n";
 echo 'TOTAL PEOPLE: ' . count ($ppl). "\n";
