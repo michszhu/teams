@@ -63,35 +63,42 @@ function expandHomeDirectory($path) {
 // Get the API client and construct the service object.
 $client = getClient();
 $service = new Google_Service_Sheets($client);
-// Prints the names and majors of students in a sample spreadsheet:
-// https://docs.google.com/spreadsheets/d/1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms/edit
+
+
 $spreadsheetId = '1LhCT9KRfMrXinRyphcBn1jz3JIUh5LQSli9mQFmOc7w';
 $range = 'signups!A1:D';
 $response = $service->spreadsheets_values->get($spreadsheetId, $range);
 $values = $response->getValues();
-	$Cfn = array_search ( 'First Name', $values[0]);
-	$Cln = array_search ( 'Last Name', $values[0]);
-	$Cgrade = array_search ( 'Grade', $values[0]);
-	$Cevents = array_search ( 'Events', $values[0]);
-	$ppl = array();
-	
-	for ($i = 1 ; $i < count ($values) ; $i++){
-		$info = $values[$i];
-		$person = [];
-		$person ['name']= $info[$Cfn] . ' ' . $info[$Cln];
-		$person ['grade'] = $info[$Cgrade];
-		$person ['events'] = explode (", " , $info[$Cevents]);
-		$person ['numevents'] = count ($person ['events']);
-		$ppl[$info[$Cfn] . ' ' . $info[$Cln]] = $person; 
-	}
+
+// find index of columns of info (name, grade, events)
+$Cfn = array_search ( 'First Name', $values[0]);
+$Cln = array_search ( 'Last Name', $values[0]);
+$Cgrade = array_search ( 'Grade', $values[0]);
+$Cevents = array_search ( 'Events', $values[0]);
+$ppl = array();
+
+// add people and their info
+for ($i = 1 ; $i < count ($values) ; $i++){
+	$info = $values[$i];
+	$person = [];
+	$person ['name']= $info[$Cfn] . ' ' . $info[$Cln];
+	$person ['grade'] = $info[$Cgrade];
+	$person ['events'] = explode (", " , $info[$Cevents]); // a person's events is put into an array
+	$person ['numrequests'] = count ($person ['events']);
+	$person ['eventsfinal'] = [];
+	$person ['numevents'] = count ($person ['eventsfinal']);
+	$ppl[$info[$Cfn] . ' ' . $info[$Cln]] = $person; // key to a person is their name
+}
 //	 echo json_encode ($ppl);    // $ppl[$name][$info]
 	
-$range = 'events!A1:B';
+$range = 'events!A1:C';
 $response = $service->spreadsheets_values->get($spreadsheetId, $range);
 $values = $response->getValues();
 $countins = 0; 
 $countevents = 0; 
 $blocks = array ();
+$okeyblocks = array ();
+$dokeyblocks = array();
 for ($i = 2 ; $i < count ($values); $i++){
 	
 	// time slots
@@ -105,33 +112,48 @@ for ($i = 2 ; $i < count ($values); $i++){
 		while ( isset ($values[$k]) && isset ($values[$k][0]) );
 		
 		$events = array ();
-		for ($p = $i ; $p<$k; $p++){
+		$okeyevents = array ();
+		$dokeyevents = array ();
+
+		for ($p = $i ; $p<$k; $p++){ // per event
 			$event = $values [$p][1];
+
 			 echo "\n". $event. ' : ';
 			$countevents++;
 			
-			$competitors = array ();
+			$signups = array ();
 		 
 			foreach ($ppl as $person){
 				if (in_array ( $event, $person ['events'] )){
-					// echo ' in ';
+					echo $person ['name'];
 					$countins++;
-					$competitors [] = $person;
+					$signups [] = $person;
 				}
 			}
-			$events[$event]['competitors'] = $competitors; 
-			$events[$event]['numcompetitors'] = count ($competitors);
+			$events[$event]['signups'] = $signups; 
+			$events[$event]['numsignups'] = count ($signups);
+			$okeyevents[$event]['competitors'] = [];
+			$okeyevents[$event]['numemptyspots'] = $values[$p][2];
+			$dokeyevents[$event]['competitors'] = [];
+			$dokeyevents[$event]['numemptyspots'] = $values[$p][2];
 		}
 		
 		$blocks [$time] = $events;
+		$okeyblocks [$time] = $okeyevents;
+		$dokeyblocks [$time] = $dokeyevents; 
 		echo "\n";
 	}
 }
    // $blocks [$time][$event][$person (key is name)][$info e.g events, event count, name, grade]
    
    
-//echo json_encode ($blocks, JSON_PRETTY_PRINT);
+echo json_encode ($blocks, JSON_PRETTY_PRINT);
+echo json_encode ($okeyblocks, JSON_PRETTY_PRINT);
+echo json_encode ($dokeyblocks, JSON_PRETTY_PRINT);
+
 echo "\n";
 echo 'TOTAL EVENT REQUESTS: ' . $countins. "\n";
 echo 'TOTAL PEOPLE: ' . count ($ppl). "\n";
 echo 'TOTAL EVENTS: ' . $countevents;
+
+
