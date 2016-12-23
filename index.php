@@ -217,7 +217,7 @@ for ($i = 1 ; $i < count ($values) ; $i++){
 	$poolroster[] = $person['name'];
 }
 
-//	 echo json_encode ($ppl);    // $ppl[$name][$info]
+	 echo json_encode ($ppl);    // $ppl[$name][$info]
 
 $range = 'events!A3:C';
 $response = $service->spreadsheets_values->get($spreadsheetId, $range);
@@ -225,8 +225,6 @@ $values = $response->getValues();
 
 $countins = 0; 
 $countevents = 0; 
-
-echo json_encode ($values, JSON_PRETTY_PRINT);
 
 $events = array ();
 $okeyevents = array ();
@@ -271,13 +269,13 @@ foreach ($ppl as $person){
 }
 
    
-// echo '<pre>'.json_encode ($events, JSON_PRETTY_PRINT);
-// echo 'TEAM OKEY' . json_encode ($okeyevents, JSON_PRETTY_PRINT);
-// echo 'TEAM DOKEY' . json_encode ($dokeyevents, JSON_PRETTY_PRINT);
-// echo "\n";
-// echo 'TOTAL EVENT REQUESTS: ' . $countins. "\n";
-// echo 'TOTAL PEOPLE: ' . count ($ppl). "\n";
-// echo 'TOTAL EVENTS: ' . $countevents . '</pre>';
+ echo '<pre>'.json_encode ($events, JSON_PRETTY_PRINT);
+ echo 'TEAM OKEY' . json_encode ($okeyevents, JSON_PRETTY_PRINT);
+ echo 'TEAM DOKEY' . json_encode ($dokeyevents, JSON_PRETTY_PRINT);
+ echo "\n";
+ echo 'TOTAL EVENT REQUESTS: ' . $countins. "\n";
+ echo 'TOTAL PEOPLE: ' . count ($ppl). "\n";
+ echo 'TOTAL EVENTS: ' . $countevents . '</pre>';
 
 /*
 	if ($event['numsignups'] < ($event['numpeopleperteam']*2) && $event['numsignups']>0){
@@ -292,16 +290,14 @@ foreach ($ppl as $person){
 */
 	
 foreach ($events as $event){
-	$eventname = $event['name']; 
 	if ($event['numsignups'] < ($event['numpeopleperteam']*2) && $event['numsignups']>0){
 		//echo json_encode ($event, JSON_PRETTY_PRINT); 
 		shuffle ($event['signups']);
-		if (in_array ($person['name'], $okeyroster) && $person['numevents'] < 3 ){
+		if (in_array ($person['name'], $okeyroster) && $person['numevents'] < 3 && !isset($person['schedule'][$event['time']) ){
 			
 		}
 	}
 }
-		//echo json_encode ($schedule, JSON_PRETTY_PRINT); 
 
 ?>
 
