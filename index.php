@@ -196,82 +196,112 @@ $Cfn = array_search ( 'First Name', $values[0]);
 $Cln = array_search ( 'Last Name', $values[0]);
 $Cgrade = array_search ( 'Grade', $values[0]);
 $Cevents = array_search ( 'Events', $values[0]);
+
 $ppl = array();
+$okeyroster = array();
+$dokeyroster = array();
+$poolroster = array();
+
 // add people and their info
 for ($i = 1 ; $i < count ($values) ; $i++){
 	$info = $values[$i];
-	$person = [];
+	$person = array();
 	$person ['name']= $info[$Cfn] . ' ' . $info[$Cln];
 	$person ['grade'] = $info[$Cgrade];
-	$person ['events'] = explode (", " , $info[$Cevents]); // a person's events is put into an array
-	$person ['numrequests'] = count ($person ['events']);
-	$person ['eventsfinal'] = [];
-	$person ['numevents'] = count ($person ['eventsfinal']);
-	$ppl[$info[$Cfn] . ' ' . $info[$Cln]] = $person; // key to a person is their name
-}
-//	 echo json_encode ($ppl);    // $ppl[$name][$info]
+	$person ['eventrequests'] = explode (", " , $info[$Cevents]); // a person's events is put into an array
+	$person ['numrequests'] = count ($person ['eventrequests']);
+	$person ['events'] = array();
+	$person ['numevents'] = count ($person ['events']);
 	
-$range = 'events!A1:C';
+	$ppl[$info[$Cfn] . ' ' . $info[$Cln]] = $person; // key to a person is their name
+	$poolroster[] = $person['name'];
+}
+
+//	 echo json_encode ($ppl);    // $ppl[$name][$info]
+
+$range = 'events!A3:C';
 $response = $service->spreadsheets_values->get($spreadsheetId, $range);
 $values = $response->getValues();
+
 $countins = 0; 
 $countevents = 0; 
-$blocks = array ();
-$okeyblocks = array ();
-$dokeyblocks = array();
-for ($i = 2 ; $i < count ($values); $i++){
-	
-	// time slots
-	if (isset ($values [$i][0]) && $values [$i][0]!=''){
-		$time = $values[$i][0];
-	
-		$k = $i - 1;
-		do{
-			$k++;
-		}
-		while ( isset ($values[$k]) && isset ($values[$k][0]) );
+
+echo json_encode ($values, JSON_PRETTY_PRINT);
+
+$events = array ();
+$okeyevents = array ();
+$dokeyevents = array ();  
+$schedule = array();
+
+foreach ($values as $row){
+	if (isset ($row[1])) {
+		$countevents++;
+
+		$event = array();
+		$event['time'] = $row[0];
+		$event['name'] = $row[1];
 		
-		$events = array ();
-		$okeyevents = array ();
-		$dokeyevents = array ();
-		for ($p = $i ; $p<$k; $p++){ // per event
-			$event = $values [$p][1];
-			 echo "\n". $event. ' : ';
-			$countevents++;
-			
-			$signups = array ();
-		 
-			foreach ($ppl as $person){
-				if (in_array ( $event, $person ['events'] )){
-					echo $person ['name'];
-					$countins++;
-					$signups [] = $person;
-				}
+		if (!in_array ($event['time'], $schedule))   // set schedule
+			$schedule[$event['time']] = [];
+	
+		$signups = array ();
+		foreach ($ppl as $person){
+			if (in_array ( $event['name'], $person ['eventrequests'] )){
+				//echo $person ['name'];
+				$countins++;
+				$signups [] = $person;
 			}
-			$events[$event]['signups'] = $signups; 
-			$events[$event]['numsignups'] = count ($signups);
-			$okeyevents[$event]['competitors'] = [];
-			$okeyevents[$event]['numemptyspots'] = $values[$p][2];
-			$dokeyevents[$event]['competitors'] = [];
-			$dokeyevents[$event]['numemptyspots'] = $values[$p][2];
 		}
-		
-		$blocks [$time] = $events;
-		$okeyblocks [$time] = $okeyevents;
-		$dokeyblocks [$time] = $dokeyevents; 
-		echo "\n";
+		$event['signups'] = $signups;
+		$event['numsignups'] = count ($signups);
+		$event['numpeopleperteam'] = $row[2];
+		$event['competitors'] = array();
+		$event['numcompetitors'] = count ($event['competitors']);
+	
+		$events[$event['name']] = $event;
+		$okeyevents[$event['name']] = $event;
+		$dokeyevents[$event['name']] = $event;		
+	}
+
+}
+
+foreach ($ppl as $person){
+	$name = $person['name'];
+	$ppl[$name]['schedule'] = $schedule; 
+}
+
+   
+// echo '<pre>'.json_encode ($events, JSON_PRETTY_PRINT);
+// echo 'TEAM OKEY' . json_encode ($okeyevents, JSON_PRETTY_PRINT);
+// echo 'TEAM DOKEY' . json_encode ($dokeyevents, JSON_PRETTY_PRINT);
+// echo "\n";
+// echo 'TOTAL EVENT REQUESTS: ' . $countins. "\n";
+// echo 'TOTAL PEOPLE: ' . count ($ppl). "\n";
+// echo 'TOTAL EVENTS: ' . $countevents . '</pre>';
+
+/*
+	if ($event['numsignups'] < ($event['numpeopleperteam']*2) && $event['numsignups']>0){
+		echo json_encode ($event, JSON_PRETTY_PRINT); 
+		shuffle ($event['signups']);
+		foreach ($event['signups'] as $person){
+			//if (in_array ($person['name'], $okeyroster) && $person['numevents'] < 3)
+					
+		//	if ($person['team'] == 'dokey' && $person['numevents'] <3)
+		}
+	}
+*/
+	
+foreach ($events as $event){
+	$eventname = $event['name']; 
+	if ($event['numsignups'] < ($event['numpeopleperteam']*2) && $event['numsignups']>0){
+		//echo json_encode ($event, JSON_PRETTY_PRINT); 
+		shuffle ($event['signups']);
+		if (in_array ($person['name'], $okeyroster) && $person['numevents'] < 3 ){
+			
+		}
 	}
 }
-   // $blocks [$time][$event][$person (key is name)][$info e.g events, event count, name, grade]
-   
-   
-echo '<pre>'.json_encode ($blocks, JSON_PRETTY_PRINT);
-echo json_encode ($okeyblocks, JSON_PRETTY_PRINT);
-echo json_encode ($dokeyblocks, JSON_PRETTY_PRINT);
-echo "\n";
-echo 'TOTAL EVENT REQUESTS: ' . $countins. "\n";
-echo 'TOTAL PEOPLE: ' . count ($ppl). "\n";
-echo 'TOTAL EVENTS: ' . $countevents . '</pre>';
+		//echo json_encode ($schedule, JSON_PRETTY_PRINT); 
 
 ?>
 
