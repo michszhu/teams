@@ -1,3 +1,4 @@
+
 <?php
 // apitest.php
 // by Karl Kranich - karl.kranich.org
@@ -259,8 +260,9 @@ foreach ($values as $row){
 			}
 		}		
 		
-		$event['numsignups'] = count ($signups);
+		
 		$event['signups'] = $signups;
+$event['numsignups'] = count ($event['signups']);
 		$GLOBALS['events'][$event['name']] = $event;
 		$GLOBALS['okey']['roster'] = array();
 		$GLOBALS['dokey']['roster'] = array();
