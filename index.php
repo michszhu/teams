@@ -293,9 +293,9 @@ foreach ($events as $event){
 	if ($event['numsignups'] < ($event['numpeopleperteam']*2) && $event['numsignups']>0){
 		//echo json_encode ($event, JSON_PRETTY_PRINT); 
 		shuffle ($event['signups']);
-		if (in_array ($person['name'], $okeyroster) && $person['numevents'] < 3 && !isset($person['schedule'][$event['time']) ){
+		//if (in_array ($person['name'], $okeyroster) && $person['numevents'] < 3 && !isset($person['schedule'][$event['time']) ){
 			
-		}
+		
 	}
 }
 
