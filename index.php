@@ -293,7 +293,7 @@ foreach ($GLOBALS['events'] as $event){
 		//echo json_encode ($event, JSON_PRETTY_PRINT); 
 		shuffle ($event['signups']);
 		
-		//priority to people aready on team 
+		/*//priority to people aready on team 
 		foreach ($event['signups'] as $name){
 			$person = $GLOBALS['ppl'][$name];
 
@@ -307,21 +307,23 @@ foreach ($GLOBALS['events'] as $event){
 				}
 			}
 
-		}
+		} */
 		
 		//nonpriority for the pool peeps
 		foreach ($event['signups'] as $name){
 			$person = $ppl [$name];
 			if ( isScheduleOpen($person, $event) && isUnderEvented($person) ){
-				if ($GLOBALS['okey']['events'][$event['name']]['numcompetitors'] < $GLOBALS['dokey']['events'][$event['name']]['numcompetitors'])
-					addToEvent ($person, $event, $GLOBALS['okey']);						
-				else if ($GLOBALS['dokey']['events'][$event['name']]['numcompetitors'] < $GLOBALS['okey']['events'][$event['name']]['numcompetitors'])
-					addToEvent ($person, $event, $GLOBALS['dokey']);	
+				if (isEventOpen($event, $GLOBALS['okey'])) 
+					if (isOnTeam ($person, $GLOBALS['okey']) || ( isOnTeam ($person, $GLOBALS['pool']) && $GLOBALS['okey']['events'][$event['name']]['numcompetitors'] < $GLOBALS['dokey']['events'][$event['name']]['numcompetitors'] )  )
+						addToEvent ($person, $event, $GLOBALS['okey']);						
+				else if (isEventOpen($event, $GLOBALS['dokey']))
+					if (isOnTeam ($person, $GLOBALS['dokey']) || ( isOnTeam ($person, $GLOBALS['pool']) && $GLOBALS['dokey']['events'][$event['name']]['numcompetitors'] < $GLOBALS['okey']['events'][$event['name']]['numcompetitors'] )  )
+						addToEvent ($person, $event, $GLOBALS['okey']);		
 				else{
 					$rng = rand (0,1);
-					if ($rng == 0)
+					if ($rng == 0 && isEventOpen($event, $GLOBALS['okey']) )
 						addToEvent ($person, $event, $GLOBALS['okey']);	
-					else
+					else if (isEventOpen ($event, $GLOBALS['dokey']))
 						addToEvent ($person, $event, $GLOBALS['dokey']);							
 				}
 					
@@ -363,19 +365,24 @@ function isTeamMaxed ($team){
 }
 
 function addToEvent (&$person, $event, &$team){
-	$team['events'][$event['name']]['competitors'][] = $person['name'];
-	$team['events'][$event['name']]['numcompetitors'] = count ($team['events'][$event['name']]['competitors']);
-	$person['events'][] = $event['name'];
-	$person['schedule'][$event['time']] = $event['name'];
-	$person['numevents']= count ($person['events']);
+	
+	if (  !($team == $GLOBALS['okey'] && isOnTeam ($person,$dokey)) && !($team == $GLOBALS['dokey'] && isOnTeam ($person,$okey))  ){ // catches traitors e.g. milad
+		$team['events'][$event['name']]['competitors'][] = $person['name'];
+		$team['events'][$event['name']]['numcompetitors'] = count ($team['events'][$event['name']]['competitors']);
+		$person['events'][] = $event['name'];
+		$person['schedule'][$event['time']] = $event['name'];
+		$person['numevents']= count ($person['events']);
 
-	$GLOBALS['events'][$event['name']]['signups'] = array_diff($GLOBALS['events'][$event['name']]['signups'], array($person['name']));
-	$GLOBALS['events'][$event['name']]['numsignups'] = 	count ($GLOBALS['events'][$event['name']]['numsignups']);
+		$GLOBALS['events'][$event['name']]['signups'] = array_diff($GLOBALS['events'][$event['name']]['signups'], array($person['name']));
+		$GLOBALS['events'][$event['name']]['numsignups'] = 	count ($GLOBALS['events'][$event['name']]['numsignups']);
 
-	if (!isOnTeam ($person, $team)){
-		$team['roster'][] = $person['name'];
-		$GLOBALS['pool']['roster'] = array_diff($GLOBALS['pool']['roster'], array($person['name']));
+		if (!isOnTeam ($person, $team)){
+			$team['roster'][] = $person['name'];
+			$GLOBALS['pool']['roster'] = array_diff($GLOBALS['pool']['roster'], array($person['name']));
+		}		
+	
 	}
+
 }
 
  echo '<pre>'.json_encode ($GLOBALS['ppl'], JSON_PRETTY_PRINT). json_encode ($GLOBALS['events'], JSON_PRETTY_PRINT);
@@ -385,7 +392,7 @@ function addToEvent (&$person, $event, &$team){
  echo 'TOTAL EVENT REQUESTS: ' . $countins. "\n";
  echo 'TOTAL PEOPLE: ' . count ($GLOBALS['ppl']). "\n";
  echo 'TOTAL EVENTS: ' . $countevents. "\n" ;  
- echo 'CANCER: MATT MILAD' . '</pre>';  
+ echo 'CANCER: MATT MILAD' . '</pre>';  //  ends up in both teams...
 
 ?>
 
