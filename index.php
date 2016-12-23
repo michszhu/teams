@@ -318,12 +318,12 @@ foreach ($GLOBALS['events'] as $event){
 		//nonpriority for the pool peeps
 		foreach ($event['signups'] as $name){
 			$person = $ppl [$name];
-			if ( isScheduleOpen($person, $event) && isUnderEvented($person) ){
+			if ( isScheduleOpen($person, $event) ){
 				 
-					if (isOnTeam ($person, $GLOBALS['okey']) || ( isOnTeam ($person, $GLOBALS['pool']) && $GLOBALS['okey']['events'][$event['name']]['numcompetitors'] < $GLOBALS['dokey']['events'][$event['name']]['numcompetitors'] )  )
+					if (isOnTeam ($person, $GLOBALS['okey']) || ( isOnTeam ($person, $GLOBALS['pool']) && numCompetitors ($GLOBALS['okey'], $event) < numCompetitors ($GLOBALS['dokey'], $event) ) )
 						addToEvent ($person, $event, $GLOBALS['okey']);						
 				else
-					if (isOnTeam ($person, $GLOBALS['dokey']) || ( isOnTeam ($person, $GLOBALS['pool']) && $GLOBALS['dokey']['events'][$event['name']]['numcompetitors'] < $GLOBALS['okey']['events'][$event['name']]['numcompetitors'] )  )
+					if (isOnTeam ($person, $GLOBALS['dokey']) || ( isOnTeam ($person, $GLOBALS['pool'])  && numCompetitors ($GLOBALS['okey'], $event) < numCompetitors ($GLOBALS['dokey'], $event) ) )
 						addToEvent ($person, $event, $GLOBALS['okey']);		
 				else{
 					$rng = rand (0,1);
@@ -340,8 +340,12 @@ foreach ($GLOBALS['events'] as $event){
 	}
 }
 
+function numCompetitors ($team, $event){
+return $team['events'][$event['name']]['numcompetitors'];
+}
+
 function isScheduleOpen($person, $event){
-	if ( $person['schedule'][$event['time']] == null  )
+	if ( $person['schedule'][$event['time']] == null  && isUnderEvented($person) )
 		return TRUE;
 	return FALSE;
 }
