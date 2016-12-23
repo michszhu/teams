@@ -396,10 +396,10 @@ function enlist ($person, &$team){
 }
 
  echo '<pre>'.json_encode ($GLOBALS['ppl'], JSON_PRETTY_PRINT); 
- //echo json_encode ($GLOBALS['events'], JSON_PRETTY_PRINT);
- //echo 'TEAM OKEY' . json_encode ($GLOBALS['okey'], JSON_PRETTY_PRINT);
- //echo 'TEAM DOKEY' . json_encode ($GLOBALS['dokey'], JSON_PRETTY_PRINT);
- // echo 'TEAM POOL' . json_encode ($GLOBALS['pool'], JSON_PRETTY_PRINT);
+ echo json_encode ($GLOBALS['events'], JSON_PRETTY_PRINT);
+ echo 'TEAM OKEY' . json_encode ($GLOBALS['okey'], JSON_PRETTY_PRINT);
+ echo 'TEAM DOKEY' . json_encode ($GLOBALS['dokey'], JSON_PRETTY_PRINT);
+  echo 'TEAM POOL' . json_encode ($GLOBALS['pool'], JSON_PRETTY_PRINT);
 
  echo "\n";
  echo 'TOTAL EVENT REQUESTS: ' . $countins. "\n";
