@@ -364,30 +364,43 @@ function isTeamMaxed ($team){
 	return FALSE;
 }
 
-function addToEvent (&$person, $event, &$team){
+function addToEvent ($person, $event, &$team){
 	
 	if (  !($team == $GLOBALS['okey'] && isOnTeam ($person,$dokey)) && !($team == $GLOBALS['dokey'] && isOnTeam ($person,$okey))  ){ // catches traitors e.g. milad
+		
+		$person = $GLOBALS['ppl'][$person['name']];
+		
 		$team['events'][$event['name']]['competitors'][] = $person['name'];
 		$team['events'][$event['name']]['numcompetitors'] = count ($team['events'][$event['name']]['competitors']);
 		$person['events'][] = $event['name'];
 		$person['schedule'][$event['time']] = $event['name'];
 		$person['numevents']= count ($person['events']);
+		
+		$GLOBALS['ppl'][$person['name']]= $person;
+
 
 		$GLOBALS['events'][$event['name']]['signups'] = array_diff($GLOBALS['events'][$event['name']]['signups'], array($person['name']));
 		$GLOBALS['events'][$event['name']]['numsignups'] = 	count ($GLOBALS['events'][$event['name']]['numsignups']);
 
-		if (!isOnTeam ($person, $team)){
-			$team['roster'][] = $person['name'];
-			$GLOBALS['pool']['roster'] = array_diff($GLOBALS['pool']['roster'], array($person['name']));
-		}		
+		
+		if (!isOnTeam ($person, $team))
+			enlist ($person, $team);
 	
 	}
 
 }
 
- echo '<pre>'.json_encode ($GLOBALS['ppl'], JSON_PRETTY_PRINT). json_encode ($GLOBALS['events'], JSON_PRETTY_PRINT);
- echo 'TEAM OKEY' . json_encode ($GLOBALS['okey'], JSON_PRETTY_PRINT);
- echo 'TEAM DOKEY' . json_encode ($GLOBALS['dokey'], JSON_PRETTY_PRINT);
+function enlist ($person, &$team){
+	$team['roster'][] = $person['name'];
+	$GLOBALS['pool']['roster'] = array_diff($GLOBALS['pool']['roster'], array($person['name']));
+}
+
+ echo '<pre>'.json_encode ($GLOBALS['ppl'], JSON_PRETTY_PRINT); 
+ //echo json_encode ($GLOBALS['events'], JSON_PRETTY_PRINT);
+ //echo 'TEAM OKEY' . json_encode ($GLOBALS['okey'], JSON_PRETTY_PRINT);
+ //echo 'TEAM DOKEY' . json_encode ($GLOBALS['dokey'], JSON_PRETTY_PRINT);
+ // echo 'TEAM POOL' . json_encode ($GLOBALS['pool'], JSON_PRETTY_PRINT);
+
  echo "\n";
  echo 'TOTAL EVENT REQUESTS: ' . $countins. "\n";
  echo 'TOTAL PEOPLE: ' . count ($GLOBALS['ppl']). "\n";
