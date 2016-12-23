@@ -372,7 +372,11 @@ function isTeamMaxed ($team){
 
 function addToEvent ($person, $event, &$team){
 	
-	if (  !($team == $GLOBALS['okey'] && isOnTeam ($person,$dokey)) && !($team == $GLOBALS['dokey'] && isOnTeam ($person,$okey))  ){ // catches traitors e.g. milad
+	if (  !($team == $GLOBALS['okey'] && isOnTeam ($person,$dokey)) && !($team == $GLOBALS['dokey'] && isOnTeam ($person,$okey))  )
+
+if (isEventOpen($event, $team))
+
+{ // catches traitors e.g. milad
 		
 		$person = $GLOBALS['ppl'][$person['name']];
 		
