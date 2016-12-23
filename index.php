@@ -241,7 +241,7 @@ foreach ($values as $row){
 		$event['name'] = $row[1];
 		
 		if (!in_array ($event['time'], $schedule))   // set schedule
-			$schedule[$event['time']] = [];
+			$schedule[$event['time']] = null;
 	
 		$event['numpeopleperteam'] = $row[2];
 		$event['competitors'] = array();
@@ -298,9 +298,9 @@ foreach ($GLOBALS['events'] as $event){
 			$person = $GLOBALS['ppl'][$name];
 
 			if ( isScheduleOpen($person, $event) && isUnderEvented($person) ){   // not passed here
-
 				if (isOnTeam ($person, $GLOBALS['okey']) && isEventOpen($event, $GLOBALS['okey'])){
 					addToEvent ($person, $event, $GLOBALS['okey']);
+					echo 'yes';
 				}
 				if (isOnTeam ($person, $GLOBALS['dokey']) && isEventOpen($event, $GLOBALS['dokey'])){
 					addToEvent ($person, $event, $GLOBALS['dokey']);
@@ -313,13 +313,10 @@ foreach ($GLOBALS['events'] as $event){
 		foreach ($event['signups'] as $name){
 			$person = $ppl [$name];
 			if ( isScheduleOpen($person, $event) && isUnderEvented($person) ){
-				if ($GLOBALS['okey']['events'][$event['name']]['numcompetitors'] < $GLOBALS['dokey']['events'][$event['name']]['numcompetitors']){
+				if ($GLOBALS['okey']['events'][$event['name']]['numcompetitors'] < $GLOBALS['dokey']['events'][$event['name']]['numcompetitors'])
 					addToEvent ($person, $event, $GLOBALS['okey']);						
-				}
-
 				else if ($GLOBALS['dokey']['events'][$event['name']]['numcompetitors'] < $GLOBALS['okey']['events'][$event['name']]['numcompetitors'])
 					addToEvent ($person, $event, $GLOBALS['dokey']);	
-
 				else{
 					$rng = rand (0,1);
 					if ($rng == 0)
@@ -336,7 +333,7 @@ foreach ($GLOBALS['events'] as $event){
 }
 
 function isScheduleOpen($person, $event){
-	if ( empty ($person['schedule'][$event['time']])  )
+	if ( $person['schedule'][$event['time']] == null  )
 		return TRUE;
 	return FALSE;
 }
@@ -359,12 +356,22 @@ function isEventOpen ($event, $team){
 	return FALSE;
 }
 
+function isTeamMaxed ($team){
+	if (count ($team['roster']) > 14)
+		return TRUE;
+	return FALSE;
+}
+
 function addToEvent (&$person, $event, &$team){
 	$team['events'][$event['name']]['competitors'][] = $person['name'];
+	$team['events'][$event['name']]['numcompetitors'] = count ($team['events'][$event['name']]['competitors']);
 	$person['events'][] = $event['name'];
-	$person['schedule'][$event['time']][] = $event['name'];
+	$person['schedule'][$event['time']] = $event['name'];
+	$person['numevents']= count ($person['events']);
+
 	$GLOBALS['events'][$event['name']]['signups'] = array_diff($GLOBALS['events'][$event['name']]['signups'], array($person['name']));
-		
+	$GLOBALS['events'][$event['name']]['numsignups'] = 	count ($GLOBALS['events'][$event['name']]['numsignups']);
+
 	if (!isOnTeam ($person, $team)){
 		$team['roster'][] = $person['name'];
 		$GLOBALS['pool']['roster'] = array_diff($GLOBALS['pool']['roster'], array($person['name']));
@@ -377,7 +384,8 @@ function addToEvent (&$person, $event, &$team){
  echo "\n";
  echo 'TOTAL EVENT REQUESTS: ' . $countins. "\n";
  echo 'TOTAL PEOPLE: ' . count ($GLOBALS['ppl']). "\n";
- echo 'TOTAL EVENTS: ' . $countevents . '</pre>';  
+ echo 'TOTAL EVENTS: ' . $countevents. "\n" ;  
+ echo 'CANCER: MATT MILAD' . '</pre>';  
 
 ?>
 
