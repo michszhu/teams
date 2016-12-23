@@ -197,10 +197,17 @@ $Cln = array_search ( 'Last Name', $values[0]);
 $Cgrade = array_search ( 'Grade', $values[0]);
 $Cevents = array_search ( 'Events', $values[0]);
 
-$ppl = array();
-$okeyroster = array();
-$dokeyroster = array();
-$poolroster = array();
+$GLOBALS['ppl'] = array();
+$GLOBALS['pool'] = array ();
+$GLOBALS['okey'] = array ();
+$GLOBALS['dokey'] = array (); 
+
+$countins = 0; 
+$countevents = 0; 
+
+$GLOBALS['events'] = array ();
+$schedule = array();
+
 
 // add people and their info
 for ($i = 1 ; $i < count ($values) ; $i++){
@@ -213,23 +220,17 @@ for ($i = 1 ; $i < count ($values) ; $i++){
 	$person ['events'] = array();
 	$person ['numevents'] = count ($person ['events']);
 	
-	$ppl[$info[$Cfn] . ' ' . $info[$Cln]] = $person; // key to a person is their name
-	$poolroster[] = $person['name'];
+	$GLOBALS['ppl'][$info[$Cfn] . ' ' . $info[$Cln]] = $person; // key to a person is their name
+	$GLOBALS['pool']['roster'][] = $person['name'];
 }
 
-	 echo json_encode ($ppl);    // $ppl[$name][$info]
+	echo json_encode ($GLOBALS['ppl']);    // $GLOBALS['ppl'][$name][$info]
 
 $range = 'events!A3:C';
 $response = $service->spreadsheets_values->get($spreadsheetId, $range);
 $values = $response->getValues();
 
-$countins = 0; 
-$countevents = 0; 
 
-$events = array ();
-$okeyevents = array ();
-$dokeyevents = array ();  
-$schedule = array();
 
 foreach ($values as $row){
 	if (isset ($row[1])) {
@@ -242,62 +243,133 @@ foreach ($values as $row){
 		if (!in_array ($event['time'], $schedule))   // set schedule
 			$schedule[$event['time']] = [];
 	
-		$signups = array ();
-		foreach ($ppl as $person){
-			if (in_array ( $event['name'], $person ['eventrequests'] )){
-				//echo $person ['name'];
-				$countins++;
-				$signups [] = $person;
-			}
-		}
-		$event['signups'] = $signups;
-		$event['numsignups'] = count ($signups);
 		$event['numpeopleperteam'] = $row[2];
 		$event['competitors'] = array();
 		$event['numcompetitors'] = count ($event['competitors']);
 	
-		$events[$event['name']] = $event;
-		$okeyevents[$event['name']] = $event;
-		$dokeyevents[$event['name']] = $event;		
+		$GLOBALS['okey'] ['events'] [$event['name']] = $event;
+		$GLOBALS['dokey'] ['events'] [$event['name']] = $event;	
+		
+		$signups = array ();
+		foreach ($GLOBALS['ppl'] as $person){
+			if (in_array ( $event['name'], $person ['eventrequests'] )){
+				//echo $person ['name'];
+				$countins++;
+				$signups [] = $person['name'];
+			}
+		}		
+		
+		$event['numsignups'] = count ($signups);
+		$event['signups'] = $signups;
+		$GLOBALS['events'][$event['name']] = $event;
+		$GLOBALS['okey']['roster'] = array();
+		$GLOBALS['dokey']['roster'] = array();
+	
 	}
 
 }
 
-foreach ($ppl as $person){
-	$name = $person['name'];
-	$ppl[$name]['schedule'] = $schedule; 
+foreach ($GLOBALS['ppl'] as $person){
+	$GLOBALS['ppl'][$person['name']]['schedule'] = $schedule; 
 }
 
    
- echo '<pre>'.json_encode ($events, JSON_PRETTY_PRINT);
- echo 'TEAM OKEY' . json_encode ($okeyevents, JSON_PRETTY_PRINT);
- echo 'TEAM DOKEY' . json_encode ($dokeyevents, JSON_PRETTY_PRINT);
- echo "\n";
- echo 'TOTAL EVENT REQUESTS: ' . $countins. "\n";
- echo 'TOTAL PEOPLE: ' . count ($ppl). "\n";
- echo 'TOTAL EVENTS: ' . $countevents . '</pre>';
+
 
 /*
 	if ($event['numsignups'] < ($event['numpeopleperteam']*2) && $event['numsignups']>0){
 		echo json_encode ($event, JSON_PRETTY_PRINT); 
 		shuffle ($event['signups']);
 		foreach ($event['signups'] as $person){
-			//if (in_array ($person['name'], $okeyroster) && $person['numevents'] < 3)
+			//if (in_array ($person['name'], $GLOBALS['okey']roster) && $person['numevents'] < 3)
 					
 		//	if ($person['team'] == 'dokey' && $person['numevents'] <3)
 		}
 	}
 */
 	
-foreach ($events as $event){
+foreach ($GLOBALS['events'] as $event){
 	if ($event['numsignups'] < ($event['numpeopleperteam']*2) && $event['numsignups']>0){
 		//echo json_encode ($event, JSON_PRETTY_PRINT); 
 		shuffle ($event['signups']);
-		//if (in_array ($person['name'], $okeyroster) && $person['numevents'] < 3 && !isset($person['schedule'][$event['time']) ){
-			
+		
+		//priority to people aready on team 
+		foreach ($event['signups'] as $name){
+			$person = $GLOBALS['ppl'] [$name];
+			if ( isScheduleOpen($person, $event) && isUnderEvented($person) ){
+				if (isOnTeam ($person, $GLOBALS['okey']) && isEventOpen($event, $GLOBALS['okey'])){
+					addToEvent ($person, $event, $GLOBALS['okey']);
+				}
+				if (isOnTeam ($person, $GLOBALS['dokey']) && isEventOpen($event, $GLOBALS['dokey'])){
+					addToEvent ($person, $event, $GLOBALS['dokey']);
+				}
+			}
+		}
+		
+		//nonpriority for the pool peeps
+		foreach ($event['signups'] as $name){
+			$person = $ppl [$name];
+			if ( isScheduleOpen($person, $event) && isUnderEvented($person) ){
+				if ($GLOBALS['okey']['events'][$event['name']]['numcompetitors'] < $GLOBALS['dokey']['events'][$event['name']]['numcompetitors'])
+					addToEvent ($person, $event, $GLOBALS['okey']);	
+				else if ($GLOBALS['dokey']['events'][$event['name']]['numcompetitors'] < $GLOBALS['okey']['events'][$event['name']]['numcompetitors'])
+					addToEvent ($person, $event, $GLOBALS['dokey']);	
+
+				else{
+					$rng = rand (0,1);
+					if ($rng == 0)
+						addToEvent ($person, $event, $GLOBALS['okey']);	
+					else
+						addToEvent ($person, $event, $GLOBALS['dokey']);							
+				}
+					
+			}
+		}
 		
 	}
 }
+
+function isScheduleOpen($person, $event){
+	if ( !isset ($person['schedule'][$event['time']]) )
+		return TRUE;
+	return FALSE;
+}
+
+function isOnTeam ($person, $team){
+	if ( in_array ($person['name'], $team['roster']) )
+		return TRUE;
+	return FALSE;
+}
+
+function isUnderEvented ($person){
+	if ($person['numevents'] < 5)
+		return TRUE;
+	return FALSE;
+}
+
+function isEventOpen ($event, $team){
+	if ($team['events'][$event['name']]['numcompetitors'] < $team['events'][$event['name']]['numpeopleperteam'] )
+		return TRUE;
+	return FALSE;
+}
+
+function addToEvent ($person, $event, $team){
+	$team['events'][$event['name']]['competitors'][] = $person;
+	$person['events'][] = $event['name'];
+	$GLOBALS['events'][$event['name']]['signups'] = array_diff($GLOBALS['events'][$event['name']]['signups'], array($person['name']));
+	if (!isOnTeam ($person, $team)){
+		$team['roster'][] = $person['name'];
+		$GLOBALS['pool']['roster'] = array_diff($GLOBALS['pool']['roster'], array($person['name']));
+	}
+}
+
+ echo '<pre>'.json_encode ($GLOBALS['events'], JSON_PRETTY_PRINT);
+ echo 'TEAM OKEY' . json_encode ($GLOBALS['okey'], JSON_PRETTY_PRINT);
+ echo 'TEAM DOKEY' . json_encode ($GLOBALS['dokey'], JSON_PRETTY_PRINT);
+ echo "\n";
+ echo 'TOTAL EVENT REQUESTS: ' . $countins. "\n";
+ echo 'TOTAL PEOPLE: ' . count ($GLOBALS['ppl']). "\n";
+ echo 'TOTAL EVENTS: ' . $countevents . '</pre>';
 
 ?>
 
