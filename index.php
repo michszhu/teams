@@ -319,17 +319,17 @@ foreach ($GLOBALS['events'] as $event){
 		foreach ($event['signups'] as $name){
 			$person = $ppl [$name];
 			if ( isScheduleOpen($person, $event) && isUnderEvented($person) ){
-				if (isEventOpen($event, $GLOBALS['okey'])) 
+				 
 					if (isOnTeam ($person, $GLOBALS['okey']) || ( isOnTeam ($person, $GLOBALS['pool']) && $GLOBALS['okey']['events'][$event['name']]['numcompetitors'] < $GLOBALS['dokey']['events'][$event['name']]['numcompetitors'] )  )
 						addToEvent ($person, $event, $GLOBALS['okey']);						
-				else if (isEventOpen($event, $GLOBALS['dokey']))
+				else
 					if (isOnTeam ($person, $GLOBALS['dokey']) || ( isOnTeam ($person, $GLOBALS['pool']) && $GLOBALS['dokey']['events'][$event['name']]['numcompetitors'] < $GLOBALS['okey']['events'][$event['name']]['numcompetitors'] )  )
 						addToEvent ($person, $event, $GLOBALS['okey']);		
 				else{
 					$rng = rand (0,1);
-					if ($rng == 0 && isEventOpen($event, $GLOBALS['okey']) )
+					if ($rng == 0)
 						addToEvent ($person, $event, $GLOBALS['okey']);	
-					else if (isEventOpen ($event, $GLOBALS['dokey']))
+					else 
 						addToEvent ($person, $event, $GLOBALS['dokey']);							
 				}
 					
@@ -397,6 +397,10 @@ if (isEventOpen($event, $team))
 			enlist ($person, $team);
 	
 	}
+
+else echo "event maxed";  
+
+else echo "wrong team";
 
 }
 
