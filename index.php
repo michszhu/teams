@@ -227,6 +227,11 @@ for ($i = 1 ; $i < count ($values) ; $i++){
 
 	echo json_encode ($GLOBALS['ppl']);    // $GLOBALS['ppl'][$name][$info]
 
+
+
+		$GLOBALS['okey']['roster'] = array();
+		$GLOBALS['dokey']['roster'] = array();
+
 $range = 'events!A3:C';
 $response = $service->spreadsheets_values->get($spreadsheetId, $range);
 $values = $response->getValues();
@@ -264,8 +269,7 @@ foreach ($values as $row){
 		$event['signups'] = $signups;
 $event['numsignups'] = count ($event['signups']);
 		$GLOBALS['events'][$event['name']] = $event;
-		$GLOBALS['okey']['roster'] = array();
-		$GLOBALS['dokey']['roster'] = array();
+
 	
 	}
 
