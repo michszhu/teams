@@ -319,12 +319,10 @@ foreach ($GLOBALS['events'] as $event){
 		foreach ($event['signups'] as $name){
 			$person = $ppl [$name];
 			if ( isScheduleOpen($person, $event) ){
-				 
-					if (isOnTeam ($person, $GLOBALS['okey']) || ( isOnTeam ($person, $GLOBALS['pool']) && numCompetitors ($GLOBALS['okey'], $event) < numCompetitors ($GLOBALS['dokey'], $event) ) )
-						addToEvent ($person, $event, $GLOBALS['okey']);						
-				else
-					if (isOnTeam ($person, $GLOBALS['dokey']) || ( isOnTeam ($person, $GLOBALS['pool'])  && numCompetitors ($GLOBALS['okey'], $event) < numCompetitors ($GLOBALS['dokey'], $event) ) )
-						addToEvent ($person, $event, $GLOBALS['okey']);		
+				if (isOnTeam ($person, $GLOBALS['okey']) || ( isOnTeam ($person, $GLOBALS['pool']) && numCompetitors ($GLOBALS['okey'], $event) < numCompetitors ($GLOBALS['dokey'], $event) ) )
+					addToEvent ($person, $event, $GLOBALS['okey']);						
+				else if (isOnTeam ($person, $GLOBALS['dokey']) || ( isOnTeam ($person, $GLOBALS['pool'])  && numCompetitors ($GLOBALS['okey'], $event) < numCompetitors ($GLOBALS['dokey'], $event) ) )
+					addToEvent ($person, $event, $GLOBALS['dokey']);		
 				else{
 					$rng = rand (0,1);
 					if ($rng == 0)
@@ -333,15 +331,15 @@ foreach ($GLOBALS['events'] as $event){
 						addToEvent ($person, $event, $GLOBALS['dokey']);							
 				}
 					
-			}			else
-				echo 'fail';
+			}
+			else echo 'fail';
 		}
 		
 	}
 }
 
 function numCompetitors ($team, $event){
-return $team['events'][$event['name']]['numcompetitors'];
+	return $team['events'][$event['name']]['numcompetitors'];
 }
 
 function isScheduleOpen($person, $event){
@@ -377,11 +375,8 @@ function isTeamMaxed ($team){
 function addToEvent ($person, $event, &$team){
 	
 	if (  !($team == $GLOBALS['okey'] && isOnTeam ($person,$dokey)) && !($team == $GLOBALS['dokey'] && isOnTeam ($person,$okey))  )
-
-if (isEventOpen($event, $team))
-
-{ // catches traitors e.g. milad
-		
+// catches traitors e.g. milad
+	if (isEventOpen($event, $team)) { 
 		$person = $GLOBALS['ppl'][$person['name']];
 		
 		$team['events'][$event['name']]['competitors'][] = $person['name'];
@@ -392,19 +387,17 @@ if (isEventOpen($event, $team))
 		
 		$GLOBALS['ppl'][$person['name']]= $person;
 
-
 		$GLOBALS['events'][$event['name']]['signups'] = array_diff($GLOBALS['events'][$event['name']]['signups'], array($person['name']));
 		$GLOBALS['events'][$event['name']]['numsignups'] = 	count ($GLOBALS['events'][$event['name']]['numsignups']);
 
-		
 		if (!isOnTeam ($person, $team))
 			enlist ($person, $team);
 	
 	}
 
-else echo "event maxed";  
+	else echo "event maxed";  
 
-else echo "wrong team";
+	else echo "wrong team";
 
 }
 
@@ -417,7 +410,7 @@ function enlist ($person, &$team){
  echo json_encode ($GLOBALS['events'], JSON_PRETTY_PRINT);
  echo 'TEAM OKEY' . json_encode ($GLOBALS['okey'], JSON_PRETTY_PRINT);
  echo 'TEAM DOKEY' . json_encode ($GLOBALS['dokey'], JSON_PRETTY_PRINT);
-  echo 'TEAM POOL' . json_encode ($GLOBALS['pool'], JSON_PRETTY_PRINT);
+ echo 'TEAM POOL' . json_encode ($GLOBALS['pool'], JSON_PRETTY_PRINT);
 
  echo "\n";
  echo 'TOTAL EVENT REQUESTS: ' . $countins. "\n";
