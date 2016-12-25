@@ -267,7 +267,9 @@ foreach ($values as $row){
 		
 		
 		$event['signups'] = $signups;
-$event['numsignups'] = count ($event['signups']);
+		$event['numsignups'] = count ($event['signups']);
+		$event['pool'] = $event['signups'];
+		$event['numpool'] = $event['numsignups'];
 		$GLOBALS['events'][$event['name']] = $event;
 
 	
@@ -387,8 +389,8 @@ function addToEvent ($person, $event, &$team){
 		
 		$GLOBALS['ppl'][$person['name']]= $person;
 
-		$GLOBALS['events'][$event['name']]['signups'] = array_diff($GLOBALS['events'][$event['name']]['signups'], array($person['name']));
-		$GLOBALS['events'][$event['name']]['numsignups'] = 	count ($GLOBALS['events'][$event['name']]['numsignups']);
+		$GLOBALS['events'][$event['name']]['pool'] = array_diff($GLOBALS['events'][$event['name']]['signups'], array($person['name']));
+		$GLOBALS['events'][$event['name']]['numpool'] = count ($GLOBALS['events'][$event['name']]['numsignups']);
 
 		if (!isOnTeam ($person, $team))
 			enlist ($person, $team);
