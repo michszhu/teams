@@ -183,19 +183,24 @@ function xmlObjToArr($obj) {
 //     echo "$colName : $colValue\n";
 //   }
 // }
+
+// set people from signups
+
 $service = new Google_Service_Sheets($client);
 $spreadsheetId = '1LhCT9KRfMrXinRyphcBn1jz3JIUh5LQSli9mQFmOc7w';
 $range = 'signups!A1:D';
 $response = $service->spreadsheets_values->get($spreadsheetId, $range);
 $values = $response->getValues();
+
 // find index of columns of info (name, grade, events)
 $Cfn = array_search ( 'First Name', $values[0]);
 $Cln = array_search ( 'Last Name', $values[0]);
 $Cgrade = array_search ( 'Grade', $values[0]);
 $Cevents = array_search ( 'Events', $values[0]);
-$GLOBALS['ppl'] = array();
-$GLOBALS['pool'] = array ();
-$GLOBALS['okey'] = array ();
+
+$GLOBALS['ppl'] = array(); // info
+$GLOBALS['pool'] = array (); /// people
+$GLOBALS['okey'] = array (); // events and competitors
 $GLOBALS['dokey'] = array (); 
 $countins = 0; 
 $countevents = 0; 
@@ -215,9 +220,8 @@ for ($i = 1 ; $i < count ($values) ; $i++){
 	$GLOBALS['ppl'][$info[$Cfn] . ' ' . $info[$Cln]] = $person; // key to a person is their name
 	$GLOBALS['pool']['roster'][] = $person['name'];
 }
-	echo json_encode ($GLOBALS['ppl']);    // $GLOBALS['ppl'][$name][$info]
-		$GLOBALS['okey']['roster'] = array();
-		$GLOBALS['dokey']['roster'] = array();
+	$GLOBALS['okey']['roster'] = array();
+	$GLOBALS['dokey']['roster'] = array();
 $range = 'events!A3:C';
 $response = $service->spreadsheets_values->get($spreadsheetId, $range);
 $values = $response->getValues();
@@ -250,9 +254,10 @@ foreach ($values as $row){
 		
 		$event['signups'] = $signups;
 		$event['numsignups'] = count ($event['signups']);
-		$event['pool'] = $event['signups'];
+		$event['pool'] = $event['signups']; // TODO remove people from eventpool if  1) schedule filled o  over evented
 		$event['numpool'] = $event['numsignups'];
-		$GLOBALS['events'][$event['name']] = $event;
+		
+		$GLOBALS['events'][$event['name']] = $event; // includes signups and pool
 	
 	}
 }
@@ -272,9 +277,8 @@ foreach ($GLOBALS['ppl'] as $person){
 	}
 */
 	
-foreach ($GLOBALS['events'] as $event){
+foreach ($GLOBALS['events'] as $event){ // TODO loop this until events filled with competitiros
 	if ($event['numsignups'] < ($event['numpeopleperteam']*2) && $event['numsignups']>0){
-		//echo json_encode ($event, JSON_PRETTY_PRINT); 
 		shuffle ($event['signups']);
 		
 		/*//priority to people aready on team 
@@ -292,14 +296,14 @@ foreach ($GLOBALS['events'] as $event){
 		} */
 		
 		//nonpriority for the pool peeps
-		foreach ($event['signups'] as $name){
+		foreach ($event['pool'] as $name){
 			$person = $ppl [$name];
 			if ( isScheduleOpen($person, $event) ){
 				if (isOnTeam ($person, $GLOBALS['okey']) || ( isOnTeam ($person, $GLOBALS['pool']) && numCompetitors ($GLOBALS['okey'], $event) < numCompetitors ($GLOBALS['dokey'], $event) ) )
 					addToEvent ($person, $event, $GLOBALS['okey']);						
-				else if (isOnTeam ($person, $GLOBALS['dokey']) || ( isOnTeam ($person, $GLOBALS['pool'])  && numCompetitors ($GLOBALS['okey'], $event) < numCompetitors ($GLOBALS['dokey'], $event) ) )
+				else if (isOnTeam ($person, $GLOBALS['dokey']) || ( isOnTeam ($person, $GLOBALS['pool'])  && numCompetitors ($GLOBALS['dokey'], $event) < numCompetitors ($GLOBALS['okey'], $event) ) )
 					addToEvent ($person, $event, $GLOBALS['dokey']);		
-				else{
+				else{ // if persion is in pool and equalnum compeittiors  in okdy and dokey
 					$rng = rand (0,1);
 					if ($rng == 0)
 						addToEvent ($person, $event, $GLOBALS['okey']);	
@@ -308,7 +312,7 @@ foreach ($GLOBALS['events'] as $event){
 				}
 					
 			}
-			else echo 'fail';
+			else echo 'schedulecoles';
 		}
 		
 	}
@@ -343,7 +347,7 @@ function isTeamMaxed ($team){
 }
 function addToEvent ($person, $event, &$team){
 	
-	if (  !($team == $GLOBALS['okey'] && isOnTeam ($person,$dokey)) && !($team == $GLOBALS['dokey'] && isOnTeam ($person,$okey))  )
+	// if (  !($team == $GLOBALS['okey'] && isOnTeam ($person,$dokey)) && !($team == $GLOBALS['dokey'] && isOnTeam ($person,$okey))  )
 // catches traitors e.g. milad
 	if (isEventOpen($event, $team)) { 
 		$person = $GLOBALS['ppl'][$person['name']];
@@ -362,7 +366,7 @@ function addToEvent ($person, $event, &$team){
 	
 	}
 	else echo "event maxed";  
-	else echo "wrong team";
+	//else echo "wrong team";
 }
 function enlist ($person, &$team){
 	$team['roster'][] = $person['name'];
