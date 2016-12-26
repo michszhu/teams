@@ -349,7 +349,7 @@ function addToEvent ($person, $event, &$team){
 	
 	// if (  !($team == $GLOBALS['okey'] && isOnTeam ($person,$dokey)) && !($team == $GLOBALS['dokey'] && isOnTeam ($person,$okey))  )
 // catches traitors e.g. milad
-	if (isEventOpen($event, $team)) { 
+	if (isEventOpen($event, $team) && isScheduleOpen($person, $event) ) { 
 		$person = $GLOBALS['ppl'][$person['name']];
 		
 		$team['events'][$event['name']]['competitors'][] = $person['name'];
