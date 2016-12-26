@@ -395,7 +395,7 @@ function enlist ($person, &$team){
 	$GLOBALS['pool']['roster'] = array_diff($GLOBALS['pool']['roster'], array($person['name']));
 }
 
-/*
+
  echo '<pre>'.json_encode ($GLOBALS['ppl'], JSON_PRETTY_PRINT); 
  echo json_encode ($GLOBALS['events'], JSON_PRETTY_PRINT);
  echo 'TEAM OKEY' . json_encode ($GLOBALS['okey'], JSON_PRETTY_PRINT);
@@ -405,8 +405,6 @@ function enlist ($person, &$team){
  echo 'TOTAL EVENT REQUESTS: ' . $countins. "\n";
  echo 'TOTAL PEOPLE: ' . count ($GLOBALS['ppl']). "\n";
  echo 'TOTAL EVENTS: ' . $countevents. "\n" ;  
- echo 'CANCER: MATT MILAD' . '</pre>';  //  ends up in both teams...  */
- echo '<pre>'.json_encode ($GLOBALS['ppl'], JSON_PRETTY_PRINT); 
- echo  json_encode ($GLOBALS['events'], JSON_PRETTY_PRINT) . '</pre>';
+ echo 'CANCER: MATT MILAD' . '</pre>';  //  ends up in both teams... 
 
 ?>
