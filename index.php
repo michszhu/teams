@@ -361,7 +361,8 @@ function addToEvent ($person, $event, &$team){
 		$team['events'][$event['name']]['numcompetitors'] = count ($team['events'][$event['name']]['competitors']);
 		$person['events'][] = $event['name'];
 		$person['schedule'][$event['time']] = $event['name'];
-		$person['numevents']= count ($person['events']);
+		$person['numevents'] = count ($person['events']);
+		echo $person['numevents'];
 		
 		$GLOBALS['ppl'][$person['name']]= $person;
 		
