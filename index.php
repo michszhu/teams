@@ -298,7 +298,7 @@ foreach ($GLOBALS['events'] as $event){ // TODO loop this until events filled wi
 		//nonpriority for the pool peeps
 		foreach ($event['pool'] as $name){
 			$person = $ppl [$name];
-			//if ( isScheduleOpen($person, $event) ){
+			if ( isScheduleOpen($person, $event) ){
 				if (isOnTeam ($person, $GLOBALS['okey']) || ( isOnTeam ($person, $GLOBALS['pool']) && numCompetitors ($GLOBALS['okey'], $event) < numCompetitors ($GLOBALS['dokey'], $event) ) )
 					addToEvent ($person, $event, $GLOBALS['okey']);						
 				else if (isOnTeam ($person, $GLOBALS['dokey']) || ( isOnTeam ($person, $GLOBALS['pool'])  && numCompetitors ($GLOBALS['dokey'], $event) < numCompetitors ($GLOBALS['okey'], $event) ) )
@@ -311,8 +311,8 @@ foreach ($GLOBALS['events'] as $event){ // TODO loop this until events filled wi
 						addToEvent ($person, $event, $GLOBALS['dokey']);							
 				}
 					
-			//}
-			//else echo 'schedulecoles';
+			}
+		else echo 'schedulecoles';
 		}
 		
 	}
@@ -363,12 +363,14 @@ function addToEvent ($person, $event, &$team){
 		$time = $event['time'];
 		foreach ($GLOBALS['events'] as $otherevents)
 			if ($otherevents['time']==$time){
+				echo $otherevents['name'] . $person['name']; 
 				$GLOBALS['events'][$otherevents['name']]['pool'] = array_diff($GLOBALS['events'][$otherevents['name']]['signups'], array($person['name']));
 				$GLOBALS['events'][$otherevents['name']]['numpool'] = count ($GLOBALS['events'][$otherevents['name']]['pool']);				
 			}
 		
 		if (isUnderEvented ($person) == FALSE)
 		foreach ($GLOBALS['events'] as $otherevents){
+			echo $otherevents['name'] . $person['name'] . '2'; 
 			$GLOBALS['events'][$otherevents['name']]['pool'] = array_diff($GLOBALS['events'][$otherevents['name']]['signups'], array($person['name']));
 			$GLOBALS['events'][$otherevents['name']]['numpool'] = count ($GLOBALS['events'][$otherevents['name']]['pool']);							
 		}
@@ -384,6 +386,8 @@ function enlist ($person, &$team){
 	$team['roster'][] = $person['name'];
 	$GLOBALS['pool']['roster'] = array_diff($GLOBALS['pool']['roster'], array($person['name']));
 }
+
+/*
  echo '<pre>'.json_encode ($GLOBALS['ppl'], JSON_PRETTY_PRINT); 
  echo json_encode ($GLOBALS['events'], JSON_PRETTY_PRINT);
  echo 'TEAM OKEY' . json_encode ($GLOBALS['okey'], JSON_PRETTY_PRINT);
@@ -393,5 +397,5 @@ function enlist ($person, &$team){
  echo 'TOTAL EVENT REQUESTS: ' . $countins. "\n";
  echo 'TOTAL PEOPLE: ' . count ($GLOBALS['ppl']). "\n";
  echo 'TOTAL EVENTS: ' . $countevents. "\n" ;  
- echo 'CANCER: MATT MILAD' . '</pre>';  //  ends up in both teams...
+ echo 'CANCER: MATT MILAD' . '</pre>';  //  ends up in both teams...  */
 ?>
