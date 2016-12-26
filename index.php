@@ -298,7 +298,7 @@ foreach ($GLOBALS['events'] as $event){ // TODO loop this until events filled wi
 		//nonpriority for the pool peeps
 		foreach ($event['pool'] as $name){
 			$person = $ppl [$name];
-			if ( isScheduleOpen($person, $event) ){
+			//if ( isScheduleOpen($person, $event) ){
 				if (isOnTeam ($person, $GLOBALS['okey']) || ( isOnTeam ($person, $GLOBALS['pool']) && numCompetitors ($GLOBALS['okey'], $event) < numCompetitors ($GLOBALS['dokey'], $event) ) )
 					addToEvent ($person, $event, $GLOBALS['okey']);						
 				else if (isOnTeam ($person, $GLOBALS['dokey']) || ( isOnTeam ($person, $GLOBALS['pool'])  && numCompetitors ($GLOBALS['dokey'], $event) < numCompetitors ($GLOBALS['okey'], $event) ) )
@@ -309,7 +309,7 @@ foreach ($GLOBALS['events'] as $event){ // TODO loop this until events filled wi
 						addToEvent ($person, $event, $GLOBALS['okey']);	
 					else 
 						addToEvent ($person, $event, $GLOBALS['dokey']);							
-				}
+				//}
 					
 			}
 			else echo 'schedulecoles';
