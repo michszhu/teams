@@ -323,7 +323,9 @@ function numCompetitors ($team, $event){
 function isScheduleOpen($person, $event){
 	if ( $person['schedule'][$event['time']] == null  && isUnderEvented($person) )
 		return TRUE;
+
 	return FALSE;
+
 }
 function isOnTeam ($person, $team){
 	if ( in_array ($person['name'], $team['roster']) )
@@ -333,7 +335,10 @@ function isOnTeam ($person, $team){
 function isUnderEvented ($person){
 	if ($person['numevents'] < 5)
 		return TRUE;
-	return FALSE;
+	else{
+		echo 'OVER EVENTED . ' . $person['numevents'] . $person['name'];
+		return FALSE;	
+	}
 }
 function isEventOpen ($event, $team){
 	if ($team['events'][$event['name']]['numcompetitors'] < $team['events'][$event['name']]['numpeopleperteam'] )
@@ -400,6 +405,7 @@ function enlist ($person, &$team){
  echo 'TOTAL PEOPLE: ' . count ($GLOBALS['ppl']). "\n";
  echo 'TOTAL EVENTS: ' . $countevents. "\n" ;  
  echo 'CANCER: MATT MILAD' . '</pre>';  //  ends up in both teams...  */
- echo '<pre>'. json_encode ($GLOBALS['events'], JSON_PRETTY_PRINT) . '</pre>';
+ echo '<pre>'.json_encode ($GLOBALS['ppl'], JSON_PRETTY_PRINT); 
+ echo  json_encode ($GLOBALS['events'], JSON_PRETTY_PRINT) . '</pre>';
 
 ?>
