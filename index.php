@@ -362,14 +362,14 @@ function addToEvent ($person, $event, &$team){
 		$person['events'][] = $event['name'];
 		$person['schedule'][$event['time']] = $event['name'];
 		$person['numevents'] = count ($person['events']);
-		echo $person['numevents'];
+		echo $person['numevents']. $person['name']. "\n";
 		
 		$GLOBALS['ppl'][$person['name']]= $person;
 		
 		$time = $event['time'];
 		foreach ($GLOBALS['events'] as $otherevents)
 			if ($otherevents['time']==$time){
-				echo $otherevents['name'] . $person['name']; 
+				// echo $otherevents['name'] . $person['name']; 
 				foreach (array_keys($GLOBALS['events'][$otherevents['name']]['pool'], $person['name']) as $key) {
    					 array_splice($GLOBALS['events'][$otherevents['name']]['pool'], $key, 1);
 				}
