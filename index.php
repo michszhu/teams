@@ -185,32 +185,28 @@ function xmlObjToArr($obj) {
 //   }
 // }
 
-
+// set people from signups 
 
 $service = new Google_Service_Sheets($client);
 $spreadsheetId = '1LhCT9KRfMrXinRyphcBn1jz3JIUh5LQSli9mQFmOc7w';
 $range = 'signups!A1:D';
 $response = $service->spreadsheets_values->get($spreadsheetId, $range);
 $values = $response->getValues();
+
 // find index of columns of info (name, grade, events)
 $Cfn = array_search ( 'First Name', $values[0]);
 $Cln = array_search ( 'Last Name', $values[0]);
 $Cgrade = array_search ( 'Grade', $values[0]);
 $Cevents = array_search ( 'Events', $values[0]);
 
-$GLOBALS['ppl'] = array();
-$GLOBALS['pool'] = array ();
-$GLOBALS['okey'] = array ();
+$GLOBALS['ppl'] = array(); // info
+$GLOBALS['pool'] = array (); // people
+$GLOBALS['okey'] = array (); // events and competitors
 $GLOBALS['dokey'] = array (); 
 
-$countins = 0; 
-$countevents = 0; 
+// $GLOBALS['events'] = array (); 
 
-$GLOBALS['events'] = array ();
-$schedule = array();
-
-
-// add people and their info
+// per person
 for ($i = 1 ; $i < count ($values) ; $i++){
 	$info = $values[$i];
 	$person = array();
@@ -218,70 +214,70 @@ for ($i = 1 ; $i < count ($values) ; $i++){
 	$person ['grade'] = $info[$Cgrade];
 	$person ['eventrequests'] = explode (", " , $info[$Cevents]); // a person's events is put into an array
 	$person ['numrequests'] = count ($person ['eventrequests']);
-	$person ['events'] = array();
+	$person ['events'] = array(); // events empty
 	$person ['numevents'] = count ($person ['events']);
 	
 	$GLOBALS['ppl'][$info[$Cfn] . ' ' . $info[$Cln]] = $person; // key to a person is their name
-	$GLOBALS['pool']['roster'][] = $person['name'];
+	$GLOBALS['pool']['roster'][] = $person['name']; // and person name to pool
 }
 
-	echo json_encode ($GLOBALS['ppl']);    // $GLOBALS['ppl'][$name][$info]
+$GLOBALS['okey']['roster'] = array(); // teams empty
+$GLOBALS['dokey']['roster'] = array();
 
 
 
-		$GLOBALS['okey']['roster'] = array();
-		$GLOBALS['dokey']['roster'] = array();
+// 
 
 $range = 'events!A3:C';
 $response = $service->spreadsheets_values->get($spreadsheetId, $range);
 $values = $response->getValues();
 
+$countins = 0; // total event signups
+$countevents = 0; 
+$timeslots = array(); // event times
 
-
+// per event
 foreach ($values as $row){
 	if (isset ($row[1])) {
 		$countevents++;
 
 		$event = array();
-		$event['time'] = $row[0];
 		$event['name'] = $row[1];
+		$event['time'] = $row[0];
 		
-		if (!in_array ($event['time'], $schedule))   // set schedule
-			$schedule[$event['time']] = null;
-	
-		$event['numpeopleperteam'] = $row[2];
-		$event['competitors'] = array();
+		if (!in_array ($event['time'], $timeslots))  
+			$timeslots[$event['time']] = null; // set schedule
+		
+		$event['numpeopleperteam'] = $row[2]; // num people that compete in event (2 or 3)
+		$event['competitors'] = array(); // competitors empty
 		$event['numcompetitors'] = count ($event['competitors']);
-	
-		$GLOBALS['okey'] ['events'] [$event['name']] = $event;
-		$GLOBALS['dokey'] ['events'] [$event['name']] = $event;	
 		
-		$signups = array ();
+		$GLOBALS['okey']['events'][$event['name']] = $event; // add event to teams
+		$GLOBALS['dokey']['events'][$event['name']] = $event;	
+		
+		
+		
+		$signups = array (); // people that signed up for event
 		foreach ($GLOBALS['ppl'] as $person){
 			if (in_array ( $event['name'], $person ['eventrequests'] )){
-				//echo $person ['name'];
 				$countins++;
 				$signups [] = $person['name'];
 			}
 		}		
 		
-		
 		$event['signups'] = $signups;
 		$event['numsignups'] = count ($event['signups']);
-		$event['pool'] = $event['signups'];
+		$event['pool'] = $event['signups']; // TODO people out of signups who are avaliable -> from signups to pool, people with max number of events + people with time slot filled removed
 		$event['numpool'] = $event['numsignups'];
-		$GLOBALS['events'][$event['name']] = $event;
-
-	
+		
+		$GLOBALS['events'][$event['name']] = $event;  // event info includes signups and avaliable people
 	}
 
 }
 
-foreach ($GLOBALS['ppl'] as $person){
-	$GLOBALS['ppl'][$person['name']]['schedule'] = $schedule; 
+foreach ($GLOBALS['ppl'] as $person){  // add empty schedule to people
+	$GLOBALS['ppl'][$person['name']]['timeslots'] = $timeslots; 
 }
-
-   
 
 
 /*
@@ -296,10 +292,9 @@ foreach ($GLOBALS['ppl'] as $person){
 	}
 */
 	
-foreach ($GLOBALS['events'] as $event){
-	if ($event['numsignups'] < ($event['numpeopleperteam']*2) && $event['numsignups']>0){
-		//echo json_encode ($event, JSON_PRETTY_PRINT); 
-		shuffle ($event['signups']);
+foreach ($GLOBALS['events'] as $event){  // TODO loop this so it keeps going until events filled up w signups
+	if ($event['numsignups'] < ($event['numpeopleperteam']*2) && $event['numsignups']>0){ // events with less people signed up filled up first so they dont have to be filled by people who didnt sign up for the event
+		shuffle ($event['signups']); // im feeling real shuffled .. 
 		
 		/*//priority to people aready on team 
 		foreach ($event['signups'] as $name){
@@ -318,14 +313,15 @@ foreach ($GLOBALS['events'] as $event){
 		} */
 		
 		//nonpriority for the pool peeps
-		foreach ($event['signups'] as $name){
-			$person = $ppl [$name];
+		
+		foreach ($event['pool'] as $name){
+			$person = $ppl [$name]; // accesss person info bc pool is only a list of names
 			if ( isScheduleOpen($person, $event) ){
 				if (isOnTeam ($person, $GLOBALS['okey']) || ( isOnTeam ($person, $GLOBALS['pool']) && numCompetitors ($GLOBALS['okey'], $event) < numCompetitors ($GLOBALS['dokey'], $event) ) )
 					addToEvent ($person, $event, $GLOBALS['okey']);						
-				else if (isOnTeam ($person, $GLOBALS['dokey']) || ( isOnTeam ($person, $GLOBALS['pool'])  && numCompetitors ($GLOBALS['okey'], $event) < numCompetitors ($GLOBALS['dokey'], $event) ) )
+				else if (isOnTeam ($person, $GLOBALS['dokey']) || ( isOnTeam ($person, $GLOBALS['pool'])  && numCompetitors ($GLOBALS['dokey'], $event) < numCompetitors ($GLOBALS['okey'], $event) ) )
 					addToEvent ($person, $event, $GLOBALS['dokey']);		
-				else{
+				else{ // if person is in pool and equal num competitiors in event in 2 teams
 					$rng = rand (0,1);
 					if ($rng == 0)
 						addToEvent ($person, $event, $GLOBALS['okey']);	
@@ -334,7 +330,7 @@ foreach ($GLOBALS['events'] as $event){
 				}
 					
 			}
-			else echo 'fail';
+			else echo 'schedule closed';
 		}
 		
 	}
@@ -345,7 +341,7 @@ function numCompetitors ($team, $event){
 }
 
 function isScheduleOpen($person, $event){
-	if ( $person['schedule'][$event['time']] == null  && isUnderEvented($person) )
+	if ( $person['timeslots'][$event['time']] == null  && isUnderEvented($person) )
 		return TRUE;
 	return FALSE;
 }
@@ -375,16 +371,14 @@ function isTeamMaxed ($team){
 }
 
 function addToEvent ($person, $event, &$team){
-	
-	if (  !($team == $GLOBALS['okey'] && isOnTeam ($person,$dokey)) && !($team == $GLOBALS['dokey'] && isOnTeam ($person,$okey))  )
-// catches traitors e.g. milad
+	// if (  !($team == $GLOBALS['okey'] && isOnTeam ($person,$dokey)) && !($team == $GLOBALS['dokey'] && isOnTeam ($person,$okey))  ) // catches doubel timers e.g. milad
 	if (isEventOpen($event, $team)) { 
 		$person = $GLOBALS['ppl'][$person['name']];
 		
 		$team['events'][$event['name']]['competitors'][] = $person['name'];
 		$team['events'][$event['name']]['numcompetitors'] = count ($team['events'][$event['name']]['competitors']);
 		$person['events'][] = $event['name'];
-		$person['schedule'][$event['time']] = $event['name'];
+		$person['timeslots'][$event['time']] = $event['name'];
 		$person['numevents']= count ($person['events']);
 		
 		$GLOBALS['ppl'][$person['name']]= $person;
