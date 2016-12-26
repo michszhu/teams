@@ -309,10 +309,10 @@ foreach ($GLOBALS['events'] as $event){ // TODO loop this until events filled wi
 						addToEvent ($person, $event, $GLOBALS['okey']);	
 					else 
 						addToEvent ($person, $event, $GLOBALS['dokey']);							
-				//}
+				}
 					
-			}
-			else echo 'schedulecoles';
+			//}
+			//else echo 'schedulecoles';
 		}
 		
 	}
@@ -349,7 +349,7 @@ function addToEvent ($person, $event, &$team){
 	
 	// if (  !($team == $GLOBALS['okey'] && isOnTeam ($person,$dokey)) && !($team == $GLOBALS['dokey'] && isOnTeam ($person,$okey))  )
 // catches traitors e.g. milad
-	if (isEventOpen($event, $team) && isScheduleOpen($person, $event) ) { 
+	if (isEventOpen($event, $team)  ) { 
 		$person = $GLOBALS['ppl'][$person['name']];
 		
 		$team['events'][$event['name']]['competitors'][] = $person['name'];
