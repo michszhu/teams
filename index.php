@@ -366,7 +366,12 @@ function addToEvent ($person, $event, &$team){
 				$GLOBALS['events'][$otherevents['name']]['pool'] = array_diff($GLOBALS['events'][$otherevents['name']]['signups'], array($person['name']));
 				$GLOBALS['events'][$otherevents['name']]['numpool'] = count ($GLOBALS['events'][$otherevents['name']]['pool']);				
 			}
-
+		
+		if (isUnderEvented ($person) == FALSE)
+		foreach ($GLOBALS['events'] as $otherevents){
+			$GLOBALS['events'][$otherevents['name']]['pool'] = array_diff($GLOBALS['events'][$otherevents['name']]['signups'], array($person['name']));
+			$GLOBALS['events'][$otherevents['name']]['numpool'] = count ($GLOBALS['events'][$otherevents['name']]['pool']);							
+		}
 		
 		if (!isOnTeam ($person, $team))
 			enlist ($person, $team);
