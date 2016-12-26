@@ -398,4 +398,6 @@ function enlist ($person, &$team){
  echo 'TOTAL PEOPLE: ' . count ($GLOBALS['ppl']). "\n";
  echo 'TOTAL EVENTS: ' . $countevents. "\n" ;  
  echo 'CANCER: MATT MILAD' . '</pre>';  //  ends up in both teams...  */
+ echo '<pre>'. json_encode ($GLOBALS['events'], JSON_PRETTY_PRINT) . '</pre>';
+
 ?>
