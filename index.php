@@ -365,7 +365,7 @@ function addToEvent ($person, $event, &$team){
 			if ($otherevents['time']==$time){
 				echo $otherevents['name'] . $person['name']; 
 				foreach (array_keys($GLOBALS['events'][$otherevents['name']]['pool'], $person['name']) as $key) {
- 				   unset($array[$key]);
+   					 array_splice($GLOBALS['events'][$otherevents['name']]['pool'], $key, 1);
 				}
 				$GLOBALS['events'][$otherevents['name']]['numpool'] = count ($GLOBALS['events'][$otherevents['name']]['pool']);				
 			}
