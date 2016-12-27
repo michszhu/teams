@@ -276,10 +276,10 @@ foreach ($GLOBALS['ppl'] as $person){
 		}
 	}
 */
-	$keepgoing = FALSE;
 	do{
-		
+	$keepgoing = FALSE;		
 foreach ($GLOBALS['events'] as $event){ // TODO loop this until events filled with competitiros
+
 	if ($event['numsignups'] < ($event['numpeopleperteam']*2) && $event['numsignups']>0){
 		$keepgoing = TRUE;
 		shuffle ($event['signups']);
