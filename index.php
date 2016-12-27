@@ -276,9 +276,13 @@ foreach ($GLOBALS['ppl'] as $person){
 		}
 	}
 */
-	
+if ($event['numsignups'] < ($event['numpeopleperteam']*2) && $event['numsignups']>0){
+	$keepgoing = FALSE;
+	do{
+		
 foreach ($GLOBALS['events'] as $event){ // TODO loop this until events filled with competitiros
 	if ($event['numsignups'] < ($event['numpeopleperteam']*2) && $event['numsignups']>0){
+		$keepgoing = TRUE;
 		shuffle ($event['signups']);
 		
 		/*//priority to people aready on team 
@@ -316,7 +320,13 @@ foreach ($GLOBALS['events'] as $event){ // TODO loop this until events filled wi
 		}
 		
 	}
+}		
+	}
+	while (	$keepgoing == TRUE);
 }
+
+
+
 function numCompetitors ($team, $event){
 	return $team['events'][$event['name']]['numcompetitors'];
 }
