@@ -368,9 +368,9 @@ function addToEvent ($person, $event, &$team){
 		
 		$time = $event['time'];
 		foreach ($GLOBALS['events'] as $otherevents)
-			if ($otherevents['time']==$time ){//|| isUnderEvented($person) == FALSE ){
+			if ($otherevents['time']==$time || isUnderEvented($person) == FALSE ){
 				echo "do". $otherevents['name'] . $person['name']. $time. "      "; 
-				$GLOBALS['events'][$otherevents['name']]['pool'] = array_diff($GLOBALS['events'][$otherevents['name']]['signups'], array($person['name']));
+				$GLOBALS['events'][$otherevents['name']]['pool'] = array_diff($GLOBALS['events'][$otherevents['name']]['pool'], array($person['name']));
 				$GLOBALS['events'][$otherevents['name']]['numpool'] = count ($GLOBALS['events'][$otherevents['name']]['pool']);				
 			}
 		
