@@ -283,21 +283,7 @@ foreach ($GLOBALS['events'] as $event){ // TODO loop this until events filled wi
 	if ($event['numpool'] < ($event['numpeopleperteam']*2) && $event['numpool']>0){
 		$keepgoing = TRUE;
 		shuffle ($event['pool']);
-		
-		/*//priority to people aready on team 
-		foreach ($event['signups'] as $name){
-			$person = $GLOBALS['ppl'][$name];
-			if ( isScheduleOpen($person, $event) && isUnderEvented($person) ){   // not passed here
-				if (isOnTeam ($person, $GLOBALS['okey']) && isEventOpen($event, $GLOBALS['okey'])){
-					addToEvent ($person, $event, $GLOBALS['okey']);
-					echo 'yes';
-				}
-				if (isOnTeam ($person, $GLOBALS['dokey']) && isEventOpen($event, $GLOBALS['dokey'])){
-					addToEvent ($person, $event, $GLOBALS['dokey']);
-				}
-			}
-		} */
-		
+	
 		//nonpriority for the pool peeps
 		foreach ($event['pool'] as $name){
 			$person = $ppl [$name];
@@ -323,7 +309,32 @@ foreach ($GLOBALS['events'] as $event){ // TODO loop this until events filled wi
 	}
 	while (	$keepgoing == TRUE);
 
+foreach ($GLOBALS['events'] as $event){ // TODO loop this until events filled with competitiros
+	if ($event['numpool']>0){
+		shuffle ($event['pool']);
 
+		//nonpriority for the pool peeps
+		foreach ($event['pool'] as $name){
+			$person = $ppl [$name];
+			if ( isScheduleOpen($person, $event) ){
+				if (isOnTeam ($person, $GLOBALS['okey']) || ( isOnTeam ($person, $GLOBALS['pool']) && numCompetitors ($GLOBALS['okey'], $event) < numCompetitors ($GLOBALS['dokey'], $event) ) )
+					addToEvent ($person, $event, $GLOBALS['okey']);						
+				else if (isOnTeam ($person, $GLOBALS['dokey']) || ( isOnTeam ($person, $GLOBALS['pool'])  && numCompetitors ($GLOBALS['dokey'], $event) < numCompetitors ($GLOBALS['okey'], $event) ) )
+					addToEvent ($person, $event, $GLOBALS['dokey']);		
+				else{ // if persion is in pool and equalnum compeittiors  in okdy and dokey
+					$rng = rand (0,1);
+					if ($rng == 0)
+						addToEvent ($person, $event, $GLOBALS['okey']);	
+					else 
+						addToEvent ($person, $event, $GLOBALS['dokey']);							
+				}
+					
+			}
+		else echo 'schedulecoles';
+		}
+		
+	}
+}		
 
 
 function numCompetitors ($team, $event){
