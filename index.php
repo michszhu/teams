@@ -362,22 +362,21 @@ function addToEvent ($person, $event, &$team){
 		$person['events'][] = $event['name'];
 		$person['schedule'][$event['time']] = $event['name'];
 		$person['numevents'] = count ($person['events']);
-		echo $person['numevents']. $person['name']. $event['name']. "\n";
+		// echo $person['numevents']. $person['name']. $event['name']. "\n";
 		
 		$GLOBALS['ppl'][$person['name']]= $person;
 		
 		$time = $event['time'];
 		foreach ($GLOBALS['events'] as $otherevents)
 			if ($otherevents['time']==$time){
-				// echo $otherevents['name'] . $person['name']; 
-			$GLOBALS['events'][$otherevents['name']]['pool'] = array_diff($GLOBALS['events'][$otherevents['name']]['signups'], array($person['name']));
-
+				echo $otherevents['name'] . $person['name']; 
+				$GLOBALS['events'][$otherevents['name']]['pool'] = array_diff($GLOBALS['events'][$otherevents['name']]['signups'], array($person['name']));
 				$GLOBALS['events'][$otherevents['name']]['numpool'] = count ($GLOBALS['events'][$otherevents['name']]['pool']);				
 			}
 		
 		if (isUnderEvented ($person) == FALSE)
 		foreach ($GLOBALS['events'] as $otherevents){
-			echo $otherevents['name'] . $person['name'] . '2'; 
+			// echo $otherevents['name'] . $person['name'] . '2'; 
 			$GLOBALS['events'][$otherevents['name']]['pool'] = array_diff($GLOBALS['events'][$otherevents['name']]['signups'], array($person['name']));
 			$GLOBALS['events'][$otherevents['name']]['numpool'] = count ($GLOBALS['events'][$otherevents['name']]['pool']);							
 		}
