@@ -11,7 +11,7 @@ $client = new Google_Client();
   environment variable. You can get these credentials
   by creating a new Service Account in the
   API console. Be sure to store the key file
-  somewhere you can get to it - though in real
+  somewhere you can get to it - though in shuffled
   operations you'd want to make sure it wasn't
   accessible from the webserver!
  ************************************************/
@@ -200,8 +200,8 @@ $Cevents = array_search ( 'Events', $values[0]);
 
 $GLOBALS['ppl'] = array(); // info
 $GLOBALS['pool'] = array (); /// people
-$GLOBALS['okey'] = array (); // events and competitors
-$GLOBALS['dokey'] = array (); 
+$GLOBALS['shuffled'] = array (); // events and competitors
+$GLOBALS['cats'] = array (); 
 $countins = 0; 
 $countevents = 0; 
 $GLOBALS['events'] = array ();
@@ -220,8 +220,8 @@ for ($i = 1 ; $i < count ($values) ; $i++){
 	$GLOBALS['ppl'][$info[$Cfn] . ' ' . $info[$Cln]] = $person; // key to a person is their name
 	$GLOBALS['pool']['roster'][] = $person['name'];
 }
-	$GLOBALS['okey']['roster'] = array();
-	$GLOBALS['dokey']['roster'] = array();
+	$GLOBALS['shuffled']['roster'] = array();
+	$GLOBALS['cats']['roster'] = array();
 $range = 'events!A3:C';
 $response = $service->spreadsheets_values->get($spreadsheetId, $range);
 $values = $response->getValues();
@@ -240,8 +240,8 @@ foreach ($values as $row){
 		$event['numcompetitors'] = count ($event['competitors']);
 		$event['open'] = true;
 	
-		$GLOBALS['okey'] ['events'] [$event['name']] = $event;
-		$GLOBALS['dokey'] ['events'] [$event['name']] = $event;	
+		$GLOBALS['shuffled'] ['events'] [$event['name']] = $event;
+		$GLOBALS['cats'] ['events'] [$event['name']] = $event;	
 		
 		$signups = array ();
 		foreach ($GLOBALS['ppl'] as $person){
@@ -271,16 +271,16 @@ foreach ($GLOBALS['ppl'] as $person){
 		echo json_encode ($event, JSON_PRETTY_PRINT); 
 		shuffle ($event['signups']);
 		foreach ($event['signups'] as $person){
-			//if (in_array ($person['name'], $GLOBALS['okey']roster) && $person['numevents'] < 3)
+			//if (in_array ($person['name'], $GLOBALS['shuffled']roster) && $person['numevents'] < 3)
 					
-		//	if ($person['team'] == 'dokey' && $person['numevents'] <3)
+		//	if ($person['team'] == 'cats' && $person['numevents'] <3)
 		}
 	}
 */
 	do{
 	$keepgoing = FALSE;		
 foreach ($GLOBALS['events'] as $event){ // TODO loop this until events filled with competitiros
-	if (  isEventOpen($event, $GLOBALS['okey']) == true && isEventOpen($event, $GLOBALS['dokey']) == true && $event['numpool'] < ($event['numpeopleperteam']*2+1) && $event['numpool']>0 ){
+	if (  isEventOpen($event, $GLOBALS['shuffled']) == true && isEventOpen($event, $GLOBALS['cats']) == true && $event['numpool'] < ($event['numpeopleperteam']*2+1) && $event['numpool']>0 ){
 		$keepgoing = TRUE;
 		shuffle ($event['pool']);
 	
@@ -288,16 +288,16 @@ foreach ($GLOBALS['events'] as $event){ // TODO loop this until events filled wi
 		foreach ($event['pool'] as $name){
 			$person = $ppl [$name];
 			if ( isScheduleOpen($person, $event) ){
-				if (isOnTeam ($person, $GLOBALS['okey']) || ( isOnTeam ($person, $GLOBALS['pool']) && numCompetitors ($GLOBALS['okey'], $event) < numCompetitors ($GLOBALS['dokey'], $event) ) )
-					addToEvent ($person, $event, $GLOBALS['okey']);						
-				else if (isOnTeam ($person, $GLOBALS['dokey']) || ( isOnTeam ($person, $GLOBALS['pool'])  && numCompetitors ($GLOBALS['dokey'], $event) < numCompetitors ($GLOBALS['okey'], $event) ) )
-					addToEvent ($person, $event, $GLOBALS['dokey']);		
-				else{ // if persion is in pool and equalnum compeittiors  in okdy and dokey
+				if (isOnTeam ($person, $GLOBALS['shuffled']) || ( isOnTeam ($person, $GLOBALS['pool']) && numCompetitors ($GLOBALS['shuffled'], $event) < numCompetitors ($GLOBALS['cats'], $event) ) )
+					addToEvent ($person, $event, $GLOBALS['shuffled']);						
+				else if (isOnTeam ($person, $GLOBALS['cats']) || ( isOnTeam ($person, $GLOBALS['pool'])  && numCompetitors ($GLOBALS['cats'], $event) < numCompetitors ($GLOBALS['shuffled'], $event) ) )
+					addToEvent ($person, $event, $GLOBALS['cats']);		
+				else{ // if persion is in pool and equalnum compeittiors  in okdy and cats
 					$rng = rand (0,1);
 					if ($rng == 0)
-						addToEvent ($person, $event, $GLOBALS['okey']);	
+						addToEvent ($person, $event, $GLOBALS['shuffled']);	
 					else 
-						addToEvent ($person, $event, $GLOBALS['dokey']);							
+						addToEvent ($person, $event, $GLOBALS['cats']);							
 				}
 					
 			}
@@ -310,11 +310,11 @@ foreach ($GLOBALS['events'] as $event){ // TODO loop this until events filled wi
 	
 	
 foreach ($GLOBALS['events'] as $event){ 
-	if ( isEventOpen($event, $GLOBALS['okey']) == true && $event['numpool']>0 ){
+	if ( isEventOpen($event, $GLOBALS['shuffled']) == true && $event['numpool']>0 ){
 		foreach ($event['pool'] as $name){
 			$person = $ppl [$name];
-			if (isScheduleOpen($person, $event) && isOnTeam ($person, $GLOBALS['okey'])){
-					addToEvent ($person, $event, $GLOBALS['okey']);											
+			if (isScheduleOpen($person, $event) && isOnTeam ($person, $GLOBALS['shuffled'])){
+					addToEvent ($person, $event, $GLOBALS['shuffled']);											
 			}
 		else echo 'schedulecoles';
 		}
@@ -322,11 +322,37 @@ foreach ($GLOBALS['events'] as $event){
 }
 
 foreach ($GLOBALS['events'] as $event){ 
-	if ( isEventOpen($event, $GLOBALS['dokey']) == true && $event['numpool']>0 ){
+	if ( isEventOpen($event, $GLOBALS['cats']) == true && $event['numpool']>0 ){
 		foreach ($event['pool'] as $name){
 			$person = $ppl [$name];
-			if (isScheduleOpen($person, $event) && isOnTeam ($person, $GLOBALS['dokey'])){
-					addToEvent ($person, $event, $GLOBALS['dokey']);											
+			if (isScheduleOpen($person, $event) && isOnTeam ($person, $GLOBALS['cats'])){
+					addToEvent ($person, $event, $GLOBALS['cats']);											
+			}
+		else echo 'schedulecoles';
+		}
+	}
+}
+
+foreach ($GLOBALS['events'] as $event){ 
+	if ( isEventOpen($event, $GLOBALS['shuffled']) == TRUE && $event['numpool']>0 ){
+		shuffle ($event['pool']);
+		foreach ($event['pool'] as $name){
+			$person = $ppl [$name];
+			if ( isScheduleOpen($person, $event) && isOnTeam ($person, $GLOBALS['pool']) && isTeamMaxed ($GLOBALS['shuffled'] == FALSE)){
+				addToEvent ($person, $event, $GLOBALS['shuffled']);		
+			}
+		else echo 'schedulecoles';
+		}
+	}
+}
+
+foreach ($GLOBALS['events'] as $event){ 
+	if ( isEventOpen($event, $GLOBALS['cats']) == TRUE && $event['numpool']>0 ){
+		shuffle ($event['pool']);
+		foreach ($event['pool'] as $name){
+			$person = $ppl [$name];
+			if ( isScheduleOpen($person, $event) && isOnTeam ($person, $GLOBALS['pool'])&& isTeamMaxed ($GLOBALS['cats'] == FALSE)){
+				addToEvent ($person, $event, $GLOBALS['cats']);		
 			}
 		else echo 'schedulecoles';
 		}
@@ -349,7 +375,7 @@ function isOnTeam ($person, $team){
 	return FALSE;
 }
 function isUnderEvented ($person){
-	if ($person['numevents'] < 4)
+	if ($person['numevents'] < 5)
 		return TRUE;
 	else{
 		echo 'OVER EVENTED . ' . $person['numevents'] . $person['name'];
@@ -365,13 +391,12 @@ function closeEvent ($event, &$team){
 	$team ['events'][$event['name']]['open'] = FALSE;
 }
 function isTeamMaxed ($team){
-	if (count ($team['roster']) > 14)
+	if (count ($team['roster']) > 20)
 		return TRUE;
 	return FALSE;
 }
 function addToEvent ($person, $event, &$team){
-	
-	// if (  !($team == $GLOBALS['okey'] && isOnTeam ($person,$dokey)) && !($team == $GLOBALS['dokey'] && isOnTeam ($person,$okey))  )
+	// if (  !($team == $GLOBALS['shuffled'] && isOnTeam ($person,$cats)) && !($team == $GLOBALS['cats'] && isOnTeam ($person,$shuffled))  )
 // catches traitors e.g. milad
 	if (isEventOpen($event, $team)  ) { 
 		$person = $GLOBALS['ppl'][$person['name']];
@@ -392,10 +417,8 @@ function addToEvent ($person, $event, &$team){
 				$GLOBALS['events'][$otherevents['name']]['pool'] = array_diff($GLOBALS['events'][$otherevents['name']]['pool'], array($person['name']));
 				$GLOBALS['events'][$otherevents['name']]['numpool'] = count ($GLOBALS['events'][$otherevents['name']]['pool']);				
 			}
-		
 		if (!isOnTeam ($person, $team))
 			enlist ($person, $team);
-	
 	}
 	else closeEvent($event, $team);  
 	//else echo "wrong team";
@@ -409,8 +432,8 @@ function enlist ($person, &$team){
 
  echo '<pre>'.json_encode ($GLOBALS['ppl'], JSON_PRETTY_PRINT); 
  echo json_encode ($GLOBALS['events'], JSON_PRETTY_PRINT);
- echo 'TEAM OKEY' . json_encode ($GLOBALS['okey'], JSON_PRETTY_PRINT);
- echo 'TEAM DOKEY' . json_encode ($GLOBALS['dokey'], JSON_PRETTY_PRINT);
+ echo 'TEAM shuffled' . json_encode ($GLOBALS['shuffled'], JSON_PRETTY_PRINT);
+ echo 'TEAM cats' . json_encode ($GLOBALS['cats'], JSON_PRETTY_PRINT);
  echo 'TEAM POOL' . json_encode ($GLOBALS['pool'], JSON_PRETTY_PRINT);
  echo "\n";
  echo 'TOTAL EVENT REQUESTS: ' . $countins. "\n";
