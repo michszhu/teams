@@ -367,7 +367,7 @@ foreach ($GLOBALS['events'] as $event){
 
 $GLOBALS['shuffled']['memedevents'] = array(); // empty competitors
 $GLOBALS['cats']['memedevents'] = array();
-$GLOBALS['ppl'][$person['name']]['thememed']= array(); // got only 1 of requested events
+$GLOBALS['ppl']['thememed']= array(); // got only 1 of requested events
 
 foreach ($GLOBALS['events'] as $event){ 
 	if (isEventOpen ($event, $GLOBALS['shuffled']))
