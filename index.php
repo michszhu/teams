@@ -359,6 +359,30 @@ foreach ($GLOBALS['events'] as $event){
 	}
 }
 
+foreach ($GLOBALS['events'] as $event){ 
+	if ( isEventOpen($event, $GLOBALS['shuffled']) == true && $event['numpool']>0 ){
+		foreach ($event['pool'] as $name){
+			$person = $ppl [$name];
+			if (isScheduleOpen($person, $event) && isOnTeam ($person, $GLOBALS['shuffled'])){
+					addToEvent ($person, $event, $GLOBALS['shuffled']);											
+			}
+		else echo 'schedulecoles';
+		}
+	}
+}
+
+foreach ($GLOBALS['events'] as $event){ 
+	if ( isEventOpen($event, $GLOBALS['cats']) == true && $event['numpool']>0 ){
+		foreach ($event['pool'] as $name){
+			$person = $ppl [$name];
+			if (isScheduleOpen($person, $event) && isOnTeam ($person, $GLOBALS['cats'])){
+					addToEvent ($person, $event, $GLOBALS['cats']);											
+			}
+		else echo 'schedulecoles';
+		}
+	}
+}
+
 function numCompetitors ($team, $event){
 	return $team['events'][$event['name']]['numcompetitors'];
 }
@@ -445,3 +469,4 @@ function enlist ($person, &$team){
  echo 'CANCER: MATT MILAD' . '</pre>';  //  ends up in both teams... 
 
 ?>
+
