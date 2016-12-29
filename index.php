@@ -280,8 +280,7 @@ foreach ($GLOBALS['ppl'] as $person){
 	do{
 	$keepgoing = FALSE;		
 foreach ($GLOBALS['events'] as $event){ // TODO loop this until events filled with competitiros
-
-	if (   (isEventOpen($event, $GLOBALS['okey']) == true && isEventOpen($event, $GLOBALS['dokey']) == true) && $event['numpool'] < ($event['numpeopleperteam']*2+1) && $event['numpool']>0 ){
+	if (  isEventOpen($event, $GLOBALS['okey']) == true && isEventOpen($event, $GLOBALS['dokey']) == true && $event['numpool'] < ($event['numpeopleperteam']*2+1) && $event['numpool']>0 ){
 		$keepgoing = TRUE;
 		shuffle ($event['pool']);
 	
@@ -304,11 +303,35 @@ foreach ($GLOBALS['events'] as $event){ // TODO loop this until events filled wi
 			}
 		else echo 'schedulecoles';
 		}
-		
 	}
 }		
 	}
 	while (	$keepgoing == TRUE);
+	
+	
+foreach ($GLOBALS['events'] as $event){ 
+	if ( isEventOpen($event, $GLOBALS['okey']) == true && $event['numpool']>0 ){
+		foreach ($event['pool'] as $name){
+			$person = $ppl [$name];
+			if (isScheduleOpen($person, $event) && isOnTeam ($person, $GLOBALS['okey'])){
+					addToEvent ($person, $event, $GLOBALS['okey']);											
+			}
+		else echo 'schedulecoles';
+		}
+	}
+}
+
+foreach ($GLOBALS['events'] as $event){ 
+	if ( isEventOpen($event, $GLOBALS['dokey']) == true && $event['numpool']>0 ){
+		foreach ($event['pool'] as $name){
+			$person = $ppl [$name];
+			if (isScheduleOpen($person, $event) && isOnTeam ($person, $GLOBALS['dokey'])){
+					addToEvent ($person, $event, $GLOBALS['dokey']);											
+			}
+		else echo 'schedulecoles';
+		}
+	}
+}
 
 function numCompetitors ($team, $event){
 	return $team['events'][$event['name']]['numcompetitors'];
