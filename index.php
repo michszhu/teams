@@ -280,7 +280,7 @@ foreach ($GLOBALS['ppl'] as $person){
 	$keepgoing = FALSE;		
 foreach ($GLOBALS['events'] as $event){ // TODO loop this until events filled with competitiros
 
-	if ($event['numpool'] < ($event['numpeopleperteam']*2+1) && $event['numpool']>0){
+	if ($event['numpool'] < ($event['numpeopleperteam']*2+1) && $event['numpool']>0 && (isEventOpen ($event, $GLOBALS['okey']) || isEventOpen($event, $GLOABLS['dokey']){
 		$keepgoing = TRUE;
 		shuffle ($event['pool']);
 	
