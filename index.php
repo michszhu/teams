@@ -41,7 +41,6 @@ $accessToken = $tokenArray["access_token"];
 $service = new Google_Service_Drive($client);
 $results = $service->files->get($fileId);
 // var_dump($results);
-
 // Section 4: Uncomment to add a row to the sheet
 // $url = "https://spreadsheets.google.com/feeds/list/$fileId/od6/private/full";
 // $method = 'POST';
@@ -69,35 +68,27 @@ $results = $service->files->get($fileId);
 // $reason = $resp->getReasonPhrase();
 // echo "$code : $reason\n\n";
 // echo "$body\n";
-
-
 // ADD PEOPLE AND INFO FROM SIGNUPS SHEET
-
 $service = new Google_Service_Sheets($client);
 $spreadsheetId = '1LhCT9KRfMrXinRyphcBn1jz3JIUh5LQSli9mQFmOc7w';
 $range = 'signups!A1:D';
 $response = $service->spreadsheets_values->get($spreadsheetId, $range);
 $values = $response->getValues();
-
 $GLOBALS['ppl'] = array(); // all people and info 
 $GLOBALS['pool'] = array (); /// people list of names
 $GLOBALS['events'] = array (); // all events and info
 $schedule = array(); // time slots 
 $countins = 0;  // total num event requests
 $countevents = 0; // total num events
-
 $GLOBALS['shuffled'] = array (); // TEAM SHUFFLED events and competitors
 $GLOBALS['cats'] = array ();  // TEAM CATS events and competitors
 $GLOBALS['shuffled']['roster'] = array(); // teams currently empty
 $GLOBALS['cats']['roster'] = array();
-
-
 // find index of columns of info (name, grade, events)
 $Cfn = array_search ( 'First Name', $values[0]);
 $Cln = array_search ( 'Last Name', $values[0]);
 $Cgrade = array_search ( 'Grade', $values[0]);
 $Cevents = array_search ( 'Events', $values[0]);
-
 // add people and their info
 for ($i = 1 ; $i < count ($values) ; $i++){
 	$info = $values[$i];
@@ -112,12 +103,7 @@ for ($i = 1 ; $i < count ($values) ; $i++){
 	$GLOBALS['ppl'][$info[$Cfn] . ' ' . $info[$Cln]] = $person; // key to a person's info is their name
 	$GLOBALS['pool']['roster'][] = $person['name']; // everyone added to pool
 }
-
-
-
-
 // ADD EVENTS AND INFO FROM EVENTS SHEET
-
 $range = 'events!A3:C';
 $response = $service->spreadsheets_values->get($spreadsheetId, $range);
 $values = $response->getValues();
@@ -161,11 +147,7 @@ foreach ($GLOBALS['ppl'] as $person){ // person has blank schedule
 	$GLOBALS['ppl'][$person['name']]['schedule'] = $schedule; 
 }
    
-
-
 // ADD COMPETITORS TO EVENTS
-
-
 // ROUND ONE adds competitors to the events that had less people sign up for them (1-4 people interested)
 // looped because events and peoples schedules fill up, so more opportunities for others
 do{
@@ -210,7 +192,6 @@ foreach ($GLOBALS['events'] as $event){
 		}
 	}
 }
-
 foreach ($GLOBALS['events'] as $event){ 
 	if ( isEventOpen($event, $GLOBALS['cats']) == TRUE && $event['numpool']>0 ){
 		shuffle ($event['pool']);
@@ -223,7 +204,6 @@ foreach ($GLOBALS['events'] as $event){
 		}
 	}
 }
-
 // ROUND THREE fill up events with people set on a team
 foreach ($GLOBALS['events'] as $event){ 
 	if ( isEventOpen($event, $GLOBALS['shuffled']) == true && $event['numpool']>0 ){
@@ -237,8 +217,6 @@ foreach ($GLOBALS['events'] as $event){
 		}
 	}
 }
-
-
 foreach ($GLOBALS['events'] as $event){ 
 	if ( isEventOpen($event, $GLOBALS['cats']) == true && $event['numpool']>0 ){
 		shuffle ($event['pool']);
@@ -251,34 +229,23 @@ foreach ($GLOBALS['events'] as $event){
 		}
 	}
 }
-
-
-
 // STATS
-
-
 $GLOBALS['shuffled']['memedevents'] = array(); // events that are missing competitiors :(
 $GLOBALS['cats']['memedevents'] = array();
 $GLOBALS['ppl']['thememed']= array(); // people who got only 1 of their requested events woops
-
 foreach ($GLOBALS['events'] as $event){  /// add memed events to memedevents
 	if (isEventOpen ($event, $GLOBALS['shuffled']))
 		$GLOBALS['shuffled']['memedevents'][] = $event['name'];
 	if (isEventOpen ($event, $GLOBALS['cats']))
 		$GLOBALS['cats']['memedevents'][] = $event['name'];
 }
-
 foreach ($GLOBAL['ppl'] as $person){ // TODO -- currently does not work
 	if ($person['numevents']==1)
 		$GLOBALS['ppl']['thememed'][] = $person['name'];
 }
-
-
-
-
 function addToEvent ($person, $event, &$team){
 	if (isEventOpen($event, $team)  ) // if event needs more competitors
-		if ( !isTeamMaxed($team) || isOnTeam($person, $team)) )  { // if team is not over 15 people limit or if person is already on the team (already included in the 15)
+		if ( !isTeamMaxed($team) || isOnTeam($person, $team))   { // if team is not over 15 people limit or if person is already on the team (already included in the 15)
 			 // access person's info
 			$person = $GLOBALS['ppl'][$person['name']];
 			
@@ -315,13 +282,10 @@ function addToEvent ($person, $event, &$team){
 		}
 	//else closeEvent($event, $team);  
 }
-
 function enlist ($person, &$team){
 	$team['roster'][] = $person['name'];
 	$GLOBALS['pool']['roster'] = array_diff($GLOBALS['pool']['roster'], array($person['name']));
 }
-
-
 function numCompetitors ($team, $event){
 	return $team['events'][$event['name']]['numcompetitors'];
 }
@@ -329,7 +293,6 @@ function isScheduleOpen($person, $event){
 	if ( $person['schedule'][$event['time']] == null  && isUnderEvented($person) )
 		return TRUE;
 	return FALSE;
-
 }
 function isOnTeam ($person, $team){
 	if ( in_array ($person['name'], $team['roster']) )
@@ -359,8 +322,6 @@ function isTeamMaxed ($team){
 	}
 	return FALSE;
 }
-
-
  echo '<pre>'.json_encode ($GLOBALS['ppl'], JSON_PRETTY_PRINT); 
  echo json_encode ($GLOBALS['events'], JSON_PRETTY_PRINT);
  echo 'TEAM shuffled' . json_encode ($GLOBALS['shuffled'], JSON_PRETTY_PRINT);
@@ -371,11 +332,7 @@ function isTeamMaxed ($team){
  echo 'TOTAL PEOPLE: ' . count ($GLOBALS['ppl']). "\n";
  echo 'TOTAL EVENTS: ' . $countevents. "\n" ;  
   //echo json_encode ($GLOBALS['shuffled']['memedevents'], JSON_PRETTY_PRINT);
-
   // echo json_encode ($GLOBALS['cats']['memedevents'], JSON_PRETTY_PRINT);
-
    // echo json_encode ($GLOBALS['ppl']['thememed'], JSON_PRETTY_PRINT);
-
  echo 'CANCER: MATT MILAD' . '</pre>';  //  ends up in both teams... 
-
 ?>
