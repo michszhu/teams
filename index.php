@@ -347,6 +347,7 @@ foreach ($GLOBALS['events'] as $event){
 	}
 }
 
+
 foreach ($GLOBALS['events'] as $event){ 
 	if ( isEventOpen($event, $GLOBALS['cats']) == true && $event['numpool']>0 ){
 		foreach ($event['pool'] as $name){
@@ -357,6 +358,26 @@ foreach ($GLOBALS['events'] as $event){
 		else echo 'schedulecoles';
 		}
 	}
+}
+
+
+
+// stats
+
+
+$GLOBALS['shuffled']['memedevents'] = array(); // empty competitors
+$GLOBALS['cats']['memedevents'] = array();
+$GLOBALS['ppl']['thememed']= array(); // got only 1 of requested events
+
+foreach ($GLOBALS['events'] as $event){ 
+	if (isEventOpen ($event, $GLOBALS['shuffled']))
+		$GLOBALS['shuffled']['memedevents'][] = $event['name'];
+	if (isEventOpen ($event, $GLOBALS['cats']))
+		$GLOBALS['cats']['memedevents'][] = $event['name'];
+}
+foreach ($GLOBAL['ppl'] as $person){
+	if ($person['numevents']==1)
+		$GLOBALS['ppl']['thememed'][] = $person['name'];
 }
 
 function numCompetitors ($team, $event){
@@ -445,6 +466,12 @@ function enlist ($person, &$team){
  echo 'TOTAL EVENT REQUESTS: ' . $countins. "\n";
  echo 'TOTAL PEOPLE: ' . count ($GLOBALS['ppl']). "\n";
  echo 'TOTAL EVENTS: ' . $countevents. "\n" ;  
+  //echo json_encode ($GLOBALS['shuffled']['memedevents'], JSON_PRETTY_PRINT);
+
+  // echo json_encode ($GLOBALS['cats']['memedevents'], JSON_PRETTY_PRINT);
+
+   // echo json_encode ($GLOBALS['ppl']['thememed'], JSON_PRETTY_PRINT);
+
  echo 'CANCER: MATT MILAD' . '</pre>';  //  ends up in both teams... 
 
 ?>
