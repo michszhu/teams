@@ -400,7 +400,8 @@ function isTeamMaxed ($team){
 function addToEvent ($person, $event, &$team){
 	// if (  !($team == $GLOBALS['shuffled'] && isOnTeam ($person,$cats)) && !($team == $GLOBALS['cats'] && isOnTeam ($person,$shuffled))  )
 // catches traitors e.g. milad
-	if (isEventOpen($event, $team)  && !(isTeamMaxed($team) && !isOnTeam($person, $team)) ){ 
+	if (isEventOpen($event, $team)  )
+		if ( !(isTeamMaxed($team) && !isOnTeam($person, $team)) )  { 
 		$person = $GLOBALS['ppl'][$person['name']];
 		
 		$team['events'][$event['name']]['competitors'][] = $person['name'];
@@ -422,9 +423,11 @@ function addToEvent ($person, $event, &$team){
 		
 		if (!isOnTeam ($person, $team))
 			enlist ($person, $team);
+		
+		if (isEventOpen($event, $team) == FALSE )
+			closeEvent($event, $team);
 	}
-	else closeEvent($event, $team);  
-	//else echo "wrong team";
+	//else closeEvent($event, $team);  
 }
 
 function enlist ($person, &$team){
