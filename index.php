@@ -338,7 +338,7 @@ foreach ($GLOBALS['events'] as $event){
 		shuffle ($event['pool']);
 		foreach ($event['pool'] as $name){
 			$person = $ppl [$name];
-			if ( isScheduleOpen($person, $event) && isOnTeam ($person, $GLOBALS['pool']) && isTeamMaxed ($GLOBALS['shuffled'] == FALSE)){
+			if ( isScheduleOpen($person, $event) && isOnTeam ($person, $GLOBALS['pool']) ){ // && isTeamMaxed ($GLOBALS['shuffled'] == FALSE)){
 				addToEvent ($person, $event, $GLOBALS['shuffled']);		
 			}
 		else echo 'schedulecoles';
@@ -351,7 +351,7 @@ foreach ($GLOBALS['events'] as $event){
 		shuffle ($event['pool']);
 		foreach ($event['pool'] as $name){
 			$person = $ppl [$name];
-			if ( isScheduleOpen($person, $event) && isOnTeam ($person, $GLOBALS['pool'])&& isTeamMaxed ($GLOBALS['cats'] == FALSE)){
+			if ( isScheduleOpen($person, $event) && isOnTeam ($person, $GLOBALS['pool'])  ){ // && isTeamMaxed ($GLOBALS['cats'] == FALSE)){
 				addToEvent ($person, $event, $GLOBALS['cats']);		
 			}
 		else echo 'schedulecoles';
@@ -391,14 +391,16 @@ function closeEvent ($event, &$team){
 	$team ['events'][$event['name']]['open'] = FALSE;
 }
 function isTeamMaxed ($team){
-	if (count ($team['roster']) > 20)
+	if (count ($team['roster']) > 14){
+		echo 'team maxed'; 
 		return TRUE;
+	}
 	return FALSE;
 }
 function addToEvent ($person, $event, &$team){
 	// if (  !($team == $GLOBALS['shuffled'] && isOnTeam ($person,$cats)) && !($team == $GLOBALS['cats'] && isOnTeam ($person,$shuffled))  )
 // catches traitors e.g. milad
-	if (isEventOpen($event, $team)  ) { 
+	if (isEventOpen($event, $team)  && !(isTeamMaxed($team) && !isOnTeam($person, $team)) ){ 
 		$person = $GLOBALS['ppl'][$person['name']];
 		
 		$team['events'][$event['name']]['competitors'][] = $person['name'];
@@ -417,6 +419,7 @@ function addToEvent ($person, $event, &$team){
 				$GLOBALS['events'][$otherevents['name']]['pool'] = array_diff($GLOBALS['events'][$otherevents['name']]['pool'], array($person['name']));
 				$GLOBALS['events'][$otherevents['name']]['numpool'] = count ($GLOBALS['events'][$otherevents['name']]['pool']);				
 			}
+		
 		if (!isOnTeam ($person, $team))
 			enlist ($person, $team);
 	}
