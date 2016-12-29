@@ -370,7 +370,7 @@ function addToEvent ($person, $event, &$team){
 			enlist ($person, $team);
 	
 	}
-	else echo "event maxed";  
+	else echo "event maxed". $event['name']. $team;  
 	//else echo "wrong team";
 }
 function enlist ($person, &$team){
