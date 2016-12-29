@@ -238,6 +238,7 @@ foreach ($values as $row){
 		$event['numpeopleperteam'] = $row[2];
 		$event['competitors'] = array();
 		$event['numcompetitors'] = count ($event['competitors']);
+		$event['open'] = true;
 	
 		$GLOBALS['okey'] ['events'] [$event['name']] = $event;
 		$GLOBALS['dokey'] ['events'] [$event['name']] = $event;	
@@ -280,7 +281,7 @@ foreach ($GLOBALS['ppl'] as $person){
 	$keepgoing = FALSE;		
 foreach ($GLOBALS['events'] as $event){ // TODO loop this until events filled with competitiros
 
-	if ($event['numpool'] < ($event['numpeopleperteam']*2+1) && $event['numpool']>0 && (isEventOpen ($event, $GLOBALS['okey']) || isEventOpen($event, $GLOABLS['dokey']){
+	if (   (isEventOpen($event, $GLOBALS['okey']) == true || isEventOpen($event, $GLOBALS['dokey']) == true) && $event['numpool'] < ($event['numpeopleperteam']*2+1) && $event['numpool']>0 ){
 		$keepgoing = TRUE;
 		shuffle ($event['pool']);
 	
@@ -337,6 +338,9 @@ function isEventOpen ($event, $team){
 		return TRUE;
 	return FALSE;
 }
+function closeEvent ($event, &$team){
+	$team ['events'][$event['name']]['open'] = FALSE;
+}
 function isTeamMaxed ($team){
 	if (count ($team['roster']) > 14)
 		return TRUE;
@@ -370,9 +374,10 @@ function addToEvent ($person, $event, &$team){
 			enlist ($person, $team);
 	
 	}
-	else echo "event maxed". $event['name']. $team;  
+	else closeEvent($event, $team);  
 	//else echo "wrong team";
 }
+
 function enlist ($person, &$team){
 	$team['roster'][] = $person['name'];
 	$GLOBALS['pool']['roster'] = array_diff($GLOBALS['pool']['roster'], array($person['name']));
