@@ -267,7 +267,7 @@ function addToEvent ($person, $event, &$team){
 			$time = $event['time'];
 			foreach ($GLOBALS['events'] as $otherevents)
 				if ($otherevents['time']==$time || isUnderEvented($person) == FALSE ){
-					echo "do". $otherevents['name'] . $person['name']. $time. "      "; 
+					// echo "do". $otherevents['name'] . $person['name']. $time. "      "; 
 					$GLOBALS['events'][$otherevents['name']]['pool'] = array_diff($GLOBALS['events'][$otherevents['name']]['pool'], array($person['name']));
 					$GLOBALS['events'][$otherevents['name']]['numpool'] = count ($GLOBALS['events'][$otherevents['name']]['pool']);				
 				}
@@ -303,7 +303,7 @@ function isUnderEvented ($person){
 	if ($person['numevents'] < 4)
 		return TRUE;
 	else{
-		echo 'OVER EVENTED . ' . $person['numevents'] . $person['name'];
+		// echo 'OVER EVENTED . ' . $person['numevents'] . $person['name'];
 		return FALSE;	
 	}
 }
@@ -317,7 +317,7 @@ function closeEvent ($event, &$team){
 }
 function isTeamMaxed ($team){
 	if (count ($team['roster']) > 14){
-		echo 'team maxed'; 
+		// echo 'team maxed'; 
 		return TRUE;
 	}
 	return FALSE;
