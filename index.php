@@ -310,30 +310,6 @@ foreach ($GLOBALS['events'] as $event){ // TODO loop this until events filled wi
 	
 	
 foreach ($GLOBALS['events'] as $event){ 
-	if ( isEventOpen($event, $GLOBALS['shuffled']) == true && $event['numpool']>0 ){
-		foreach ($event['pool'] as $name){
-			$person = $ppl [$name];
-			if (isScheduleOpen($person, $event) && isOnTeam ($person, $GLOBALS['shuffled'])){
-					addToEvent ($person, $event, $GLOBALS['shuffled']);											
-			}
-		else echo 'schedulecoles';
-		}
-	}
-}
-
-foreach ($GLOBALS['events'] as $event){ 
-	if ( isEventOpen($event, $GLOBALS['cats']) == true && $event['numpool']>0 ){
-		foreach ($event['pool'] as $name){
-			$person = $ppl [$name];
-			if (isScheduleOpen($person, $event) && isOnTeam ($person, $GLOBALS['cats'])){
-					addToEvent ($person, $event, $GLOBALS['cats']);											
-			}
-		else echo 'schedulecoles';
-		}
-	}
-}
-
-foreach ($GLOBALS['events'] as $event){ 
 	if ( isEventOpen($event, $GLOBALS['shuffled']) == TRUE && $event['numpool']>0 ){
 		shuffle ($event['pool']);
 		foreach ($event['pool'] as $name){
@@ -399,7 +375,7 @@ function isOnTeam ($person, $team){
 	return FALSE;
 }
 function isUnderEvented ($person){
-	if ($person['numevents'] < 5)
+	if ($person['numevents'] < 4)
 		return TRUE;
 	else{
 		echo 'OVER EVENTED . ' . $person['numevents'] . $person['name'];
@@ -469,4 +445,3 @@ function enlist ($person, &$team){
  echo 'CANCER: MATT MILAD' . '</pre>';  //  ends up in both teams... 
 
 ?>
-
