@@ -234,28 +234,44 @@ foreach ($GLOBALS['events'] as $event){
 	}
 }
 
+foreach ($GLOBALS['events'] as $event){ 
+	while ($GLOBALS['shuffled']['events'][$event['name']]['numcompetitors'] < $GLOBALS['shuffled']['events'][$event['name']]['numpeopleperteam']){
+		$GLOBALS['shuffled']['events'][$event['name']]['competitors'][] = "EMPTY";
+		$GLOBALS['shuffled']['events'][$event['name']]['numcompetitors']++; 
+	}
+}
 
-$valueInputOption = "raw"; 
+foreach ($GLOBALS['events'] as $event){ 
+	while ($GLOBALS['cats']['events'][$event['name']]['numcompetitors'] < $GLOBALS['cats']['events'][$event['name']]['numpeopleperteam']){
+		$GLOBALS['cats']['events'][$event['name']]['competitors'][] = "EMPTY";
+		$GLOBALS['cats']['events'][$event['name']]['numcompetitors']++; 
+	}
+}
 
-$body = new Google_Service_Sheets_ValueRange(array(
-  'values' => $values
-));
-$params = array(
-  'valueInputOption' => $valueInputOption
-);
 
+
+// INPUT RESULTS BACK INTO SHEETS
 
 foreach ($GLOBALS['events'] as $event){
 	$range = 'events!D' . $event['row'] . ':F';
-
 	$values = array(
 		$GLOBALS['shuffled']['events'][$event['name']]['competitors'],
 	);	
-	
+	$body = new Google_Service_Sheets_ValueRange(array('values' => $values));
+	$valueInputOption = "raw"; 
+	$params = array('valueInputOption' => $valueInputOption);	
 	$result = $service->spreadsheets_values->update($spreadsheetId, $range,$body, $params);	
-	
 }
-
+foreach ($GLOBALS['events'] as $event){
+	$range = 'events!H' . $event['row'] . ':J';
+	$values = array(
+		$GLOBALS['cats']['events'][$event['name']]['competitors'],
+	);	
+	$body = new Google_Service_Sheets_ValueRange(array('values' => $values));
+	$valueInputOption = "raw"; 
+	$params = array('valueInputOption' => $valueInputOption);	
+	$result = $service->spreadsheets_values->update($spreadsheetId, $range,$body, $params);	
+}
 
 
 
@@ -270,7 +286,7 @@ foreach ($GLOBALS['events'] as $event){  /// add memed events to memedevents
 	if (isEventOpen ($event, $GLOBALS['cats']))
 		$GLOBALS['cats']['memedevents'][] = $event['name'];
 }
-foreach ($GLOBALS['ppl'] as $person){ // TODO -- currently does not work
+foreach ($GLOBALS['ppl'] as $person){ 
 	if ($person['numevents'] == 1){
 		echo 'someone memed ' . $person['name']; 
 		$GLOBALS['ppl']['thememed'][] = $person['name'];
