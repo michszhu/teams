@@ -107,6 +107,7 @@ for ($i = 1 ; $i < count ($values) ; $i++){
 $range = 'events!A3:C';
 $response = $service->spreadsheets_values->get($spreadsheetId, $range);
 $values = $response->getValues();
+$rownum = 3; 
 foreach ($values as $row){
 	if (isset ($row[1])) {
 		$countevents++;
@@ -119,6 +120,7 @@ foreach ($values as $row){
 		$event['competitors'] = array(); // event set with no competitors 
 		$event['numcompetitors'] = count ($event['competitors']);
 		$event['open'] = true;  // need to add competitors
+		$event['row'] = $rownum; 
 	
 		$GLOBALS['shuffled'] ['events'] [$event['name']] = $event;  // add event to global teams
 		$GLOBALS['cats'] ['events'] [$event['name']] = $event;	
@@ -140,8 +142,10 @@ foreach ($values as $row){
 		$event['pool'] = $event['signups'];
 		$event['numpool'] = $event['numsignups'];
 		
+		
 		$GLOBALS['events'][$event['name']] = $event; // add event including signups and pool to global events
 	}
+	$rownum++; 
 }
 foreach ($GLOBALS['ppl'] as $person){ // person has blank schedule
 	$GLOBALS['ppl'][$person['name']]['schedule'] = $schedule; 
@@ -230,22 +234,30 @@ foreach ($GLOBALS['events'] as $event){
 	}
 }
 
-$range = 'events!D3:F';
 
 $valueInputOption = "raw"; 
-$values = array(
-    array(
-       'one' => 'ok'
-    ),
-);
+
 $body = new Google_Service_Sheets_ValueRange(array(
   'values' => $values
 ));
 $params = array(
   'valueInputOption' => $valueInputOption
 );
-$result = $service->spreadsheets_values->update($spreadsheetId, $range,
-    $body, $params);
+
+
+foreach ($GLOBALS['events'] as $event){
+	$range = 'events!D' . $event['row'] . ':F';
+
+	$values = array(
+		$GLOBALS['shuffled']['events'][$event['name']]['competitors'],
+	);	
+	
+	$result = $service->spreadsheets_values->update($spreadsheetId, $range,$body, $params);	
+	
+}
+
+
+
 
 
 // STATS
