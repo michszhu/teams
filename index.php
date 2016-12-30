@@ -229,6 +229,8 @@ foreach ($GLOBALS['events'] as $event){
 		}
 	}
 }
+
+
 // STATS
 $GLOBALS['shuffled']['memedevents'] = array(); // events that are missing competitiors :(
 $GLOBALS['cats']['memedevents'] = array();
@@ -240,8 +242,10 @@ foreach ($GLOBALS['events'] as $event){  /// add memed events to memedevents
 		$GLOBALS['cats']['memedevents'][] = $event['name'];
 }
 foreach ($GLOBAL['ppl'] as $person){ // TODO -- currently does not work
-	if ($person['numevents']==1)
+	if ($person['numevents'] == 1){
+		echo 'someone memed ' . $person['name']; 
 		$GLOBALS['ppl']['thememed'][] = $person['name'];
+	}
 }
 function addToEvent ($person, $event, &$team){
 	if (isEventOpen($event, $team)  ) // if event needs more competitors
