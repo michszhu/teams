@@ -230,6 +230,23 @@ foreach ($GLOBALS['events'] as $event){
 	}
 }
 
+$range = 'events!D3:F';
+
+$valueInputOption = "raw"; 
+$values = array(
+    array(
+       'one' => 'ok'
+    ),
+);
+$body = new Google_Service_Sheets_ValueRange(array(
+  'values' => $values
+));
+$params = array(
+  'valueInputOption' => $valueInputOption
+);
+$result = $service->spreadsheets_values->update($spreadsheetId, $range,
+    $body, $params);
+
 
 // STATS
 $GLOBALS['shuffled']['memedevents'] = array(); // events that are missing competitiors :(
