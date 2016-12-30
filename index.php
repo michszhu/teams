@@ -248,31 +248,41 @@ foreach ($GLOBALS['events'] as $event){
 	}
 }
 
-
+$output = array();
+foreach ($values as $row){
+	if (isset ($row[1])) {
+		$output[] = $GLOBALS['shuffled']['events'][$row[1]]['competitors'];
+	}
+	else
+		$output[] = array();
+}
 
 // INPUT RESULTS BACK INTO SHEETS
+		
+$range = 'events!D3:F';
+$valueInputOption = "raw"; 
+$params = array('valueInputOption' => $valueInputOption);		
+$body = new Google_Service_Sheets_ValueRange(array('values' => $output));
+$result = $service->spreadsheets_values->update($spreadsheetId, $range,$body, $params);	
+		
 
-foreach ($GLOBALS['events'] as $event){
-	$range = 'events!D' . $event['row'] . ':F';
-	$values = array(
-		$GLOBALS['shuffled']['events'][$event['name']]['competitors'],
-	);	
-	$body = new Google_Service_Sheets_ValueRange(array('values' => $values));
-	$valueInputOption = "raw"; 
-	$params = array('valueInputOption' => $valueInputOption);	
-	$result = $service->spreadsheets_values->update($spreadsheetId, $range,$body, $params);	
-}
-foreach ($GLOBALS['events'] as $event){
-	$range = 'events!H' . $event['row'] . ':J';
-	$values = array(
-		$GLOBALS['cats']['events'][$event['name']]['competitors'],
-	);	
-	$body = new Google_Service_Sheets_ValueRange(array('values' => $values));
-	$valueInputOption = "raw"; 
-	$params = array('valueInputOption' => $valueInputOption);	
-	$result = $service->spreadsheets_values->update($spreadsheetId, $range,$body, $params);	
+
+$output = array();
+foreach ($values as $row){
+	if (isset ($row[1])) {
+		$output[] = $GLOBALS['cats']['events'][$row[1]]['competitors'];
+	}
+	else
+		$output[] = array();
 }
 
+// INPUT RESULTS BACK INTO SHEETS
+		
+$range = 'events!H3:J';
+$valueInputOption = "raw"; 
+$params = array('valueInputOption' => $valueInputOption);		
+$body = new Google_Service_Sheets_ValueRange(array('values' => $output));
+$result = $service->spreadsheets_values->update($spreadsheetId, $range,$body, $params);	
 
 
 
