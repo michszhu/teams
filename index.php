@@ -172,7 +172,7 @@ do{
 							addToEvent ($person, $event, $GLOBALS['cats']);							
 					}
 				}
-			else echo 'schedulecoles';
+			// else echo 'schedulecoles';
 			}
 		}
 	}		
@@ -188,7 +188,7 @@ foreach ($GLOBALS['events'] as $event){
 			if ( isScheduleOpen($person, $event) && isOnTeam ($person, $GLOBALS['pool']) ){ 
 				addToEvent ($person, $event, $GLOBALS['shuffled']);		
 			}
-		else echo 'schedulecoles';
+		// else echo 'schedulecoles';
 		}
 	}
 }
@@ -200,7 +200,7 @@ foreach ($GLOBALS['events'] as $event){
 			if ( isScheduleOpen($person, $event) && isOnTeam ($person, $GLOBALS['pool'])  ){ 
 				addToEvent ($person, $event, $GLOBALS['cats']);		
 			}
-		else echo 'schedulecoles';
+		// else echo 'schedulecoles';
 		}
 	}
 }
@@ -213,7 +213,7 @@ foreach ($GLOBALS['events'] as $event){
 			if (isScheduleOpen($person, $event) && isOnTeam ($person, $GLOBALS['shuffled'])){
 					addToEvent ($person, $event, $GLOBALS['shuffled']);											
 			}
-		else echo 'schedulecoles';
+		// else echo 'schedulecoles';
 		}
 	}
 }
@@ -225,7 +225,7 @@ foreach ($GLOBALS['events'] as $event){
 			if (isScheduleOpen($person, $event) && isOnTeam ($person, $GLOBALS['cats'])){
 					addToEvent ($person, $event, $GLOBALS['cats']);											
 			}
-		else echo 'schedulecoles';
+		// else echo 'schedulecoles';
 		}
 	}
 }
@@ -241,7 +241,7 @@ foreach ($GLOBALS['events'] as $event){  /// add memed events to memedevents
 	if (isEventOpen ($event, $GLOBALS['cats']))
 		$GLOBALS['cats']['memedevents'][] = $event['name'];
 }
-foreach ($GLOBAL['ppl'] as $person){ // TODO -- currently does not work
+foreach ($GLOBALS['ppl'] as $person){ // TODO -- currently does not work
 	if ($person['numevents'] == 1){
 		echo 'someone memed ' . $person['name']; 
 		$GLOBALS['ppl']['thememed'][] = $person['name'];
