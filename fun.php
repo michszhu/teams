@@ -253,7 +253,7 @@ foreach ($GLOBALS['events'] as $event){
 
 // ADD EMPTYS or DROP
 foreach ($GLOBALS['events'] as $event){ 
-	if ($GLOBALS['shuffled']['events'][$event['name']]['drop'] == FALSE){
+	if ($GLOBALS['shuffled']['events'][$event['name']]['numcompetitors'] == 0){
 		$GLOBALS['shuffled']['events'][$event['name']]['competitors'][] = "DROP";
 		$GLOBALS['shuffled']['events'][$event['name']]['competitors'][] = "DROP";
 		$GLOBALS['shuffled']['events'][$event['name']]['drop'] = TRUE;	
@@ -266,7 +266,7 @@ foreach ($GLOBALS['events'] as $event){
 }
 
 foreach ($GLOBALS['events'] as $event){ 
-	if ($GLOBALS['cats']['events'][$event['name']]['drop'] == FALSE){
+	if ($GLOBALS['cats']['events'][$event['name']]['numcompetitors'] == 0){
 		$GLOBALS['cats']['events'][$event['name']]['competitors'][] = "DROP";
 		$GLOBALS['cats']['events'][$event['name']]['competitors'][] = "DROP";
 		$GLOBALS['cats']['events'][$event['name']]['drop'] = TRUE;	
@@ -276,6 +276,7 @@ foreach ($GLOBALS['events'] as $event){
 		$GLOBALS['cats']['events'][$event['name']]['numcompetitors']++; 
 	}
 }
+
 
 
 
