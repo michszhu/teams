@@ -1,10 +1,14 @@
+
 {
+    "name": "teams",
     "require": {
+        "consolidation/Robo": "~1", 
         "google/apiclient": "2.0"
-    }
-    require-dev: {
-         "codegyre/robo": "*"
+    },
+    "scripts": {
+        "test": "composer robo test",
+        "phar": "composer robo phar:build",
+        "robo": "robo --ansi --load-from $(pwd)/scripts/BuildCommands.php"
     }
 
 }
-
