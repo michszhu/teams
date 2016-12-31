@@ -2,7 +2,16 @@
 
 <?php
 
+/*
+// simple execution
+$this->taskGulpRun()->run();
 
+// run task 'clean' with --silent option
+$this->taskGulpRun('clean')
+     ->silent()
+     ->run();
+     
+     */
 
 // apitest.php
 // by Karl Kranich - karl.kranich.org
@@ -75,7 +84,7 @@ $results = $service->files->get($fileId);
 // echo "$body\n";
 // ADD PEOPLE AND INFO FROM SIGNUPS SHEET
 $service = new Google_Service_Sheets($client);
-$spreadsheetId = $_POST["name"]; //  '1LhCT9KRfMrXinRyphcBn1jz3JIUh5LQSli9mQFmOc7w';
+$spreadsheetId =   '1LhCT9KRfMrXinRyphcBn1jz3JIUh5LQSli9mQFmOc7w';
 $range = 'signups!A1:D';
 $response = $service->spreadsheets_values->get($spreadsheetId, $range);
 $values = $response->getValues();
@@ -241,6 +250,37 @@ foreach ($GLOBALS['events'] as $event){
 }
 
 
+// GIVE PEOPLE WITH 1 EVENT MORE EVENTS
+foreach ($GLOBALS['ppl'] as $person){ 
+	if ($person['numevents'] == 1){
+		if (isOnTeam($person, $GLOBALS['shuffled'])){
+			foreach ($person['eventrequests'] as $eventname){
+				foreach ($GLOBALS['shuffled']['events'][$eventname]['competitors'] as $p){
+					$otherperson =  $GLOBALS['ppl'][$p]; 
+					if ($otherperson['numevents'] > 3){
+						$GLOBALS['shuffled']['events'][$eventname]['competitors'] = array_diff($GLOBALS['shuffled']['events'][$eventname]['competitors'], array($otherperson['name']) );
+						$GLOBALS['shuffled']['events'][$eventname]['competitors'][] = $person['name'];
+					}
+				}
+			}			
+		}
+		
+		if (isOnTeam($person, $GLOBALS['cats'])){
+			foreach ($person['eventrequests'] as $eventname){
+				foreach ($GLOBALS['cats']['events'][$eventname]['competitors'] as $p){
+					$otherperson =  $GLOBALS['ppl'][$p]; 
+					if ($otherperson['numevents'] > 3){
+						$GLOBALS['cats']['events'][$eventname]['competitors'] = array_diff($GLOBALS['shuffled']['events'][$eventname]['competitors'], array($otherperson['name']) );
+						$GLOBALS['cats']['events'][$eventname]['competitors'][] = $person['name'];
+					}
+				}
+			}			
+		}
+	
+
+	}
+}
+
 
 // ADD EMPTYS or DROP
 foreach ($GLOBALS['events'] as $event){ 
@@ -268,6 +308,8 @@ foreach ($GLOBALS['events'] as $event){
 	}
 }
 
+
+// FILL IN EMPTY SPOTS WITH UNVOLUNTARY ADDITIONS
 
 
 
@@ -404,6 +446,7 @@ function isTeamMaxed ($team){
 	}
 	return FALSE;
 }
+
  echo '<pre>'.json_encode ($GLOBALS['ppl'], JSON_PRETTY_PRINT); 
  echo json_encode ($GLOBALS['events'], JSON_PRETTY_PRINT);
  echo 'TEAM shuffled' . json_encode ($GLOBALS['shuffled'], JSON_PRETTY_PRINT);
@@ -416,5 +459,5 @@ function isTeamMaxed ($team){
   //echo json_encode ($GLOBALS['shuffled']['memedevents'], JSON_PRETTY_PRINT);
   // echo json_encode ($GLOBALS['cats']['memedevents'], JSON_PRETTY_PRINT);
    // echo json_encode ($GLOBALS['ppl']['thememed'], JSON_PRETTY_PRINT);
- echo 'CANCER: MATT MILAD' . '</pre>';  //  ends up in both teams... 
+ echo 'CANCER: MATT MILAD' . '</pre>';  //  ends up in both teams...   
 ?>
