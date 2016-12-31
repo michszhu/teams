@@ -259,7 +259,7 @@ foreach ($GLOBALS['ppl'] as $person){
 				foreach ($GLOBALS['shuffled']['events'][$eventname]['competitors'] as $p){
 					$otherperson =  $GLOBALS['ppl'][$p]; 
 					if ($otherperson['numevents'] > 3){
-						echo $otherperson['name'].'hjkl ';
+						echo $otherperson['name'].$eventname.'hjkl ';
 					
 						$GLOBALS['shuffled']['events'][$eventname]['competitors'] = array_diff($GLOBALS['shuffled']['events'][$eventname]['competitors'], array($otherperson['name']) );
 						$GLOBALS['shuffled']['events'][$eventname]['competitors'][] = $person['name'];
