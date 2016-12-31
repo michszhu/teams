@@ -2,6 +2,7 @@
 
 <?php
 
+/*
 // simple execution
 $this->taskGulpRun()->run();
 
@@ -9,6 +10,8 @@ $this->taskGulpRun()->run();
 $this->taskGulpRun('clean')
      ->silent()
      ->run();
+     
+     */
 
 // apitest.php
 // by Karl Kranich - karl.kranich.org
