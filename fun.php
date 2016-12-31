@@ -135,6 +135,7 @@ foreach ($values as $row){
 		$event['numcompetitors'] = count ($event['competitors']);
 		$event['open'] = true;  // need to add competitors
 		$event['row'] = $rownum; 
+		$event['drop'] = FALSE;
 	
 		$GLOBALS['shuffled'] ['events'] [$event['name']] = $event;  // add event to global teams
 		$GLOBALS['cats'] ['events'] [$event['name']] = $event;	
@@ -248,19 +249,35 @@ foreach ($GLOBALS['events'] as $event){
 	}
 }
 
+
+
+// ADD EMPTYS or DROP
 foreach ($GLOBALS['events'] as $event){ 
-	while ($GLOBALS['shuffled']['events'][$event['name']]['numcompetitors'] < $GLOBALS['shuffled']['events'][$event['name']]['numpeopleperteam']){
+	if ($GLOBALS['shuffled']['events'][$event['name']]['drop'] == FALSE){
+		$GLOBALS['shuffled']['events'][$event['name']]['competitors'][] = "DROP";
+		$GLOBALS['shuffled']['events'][$event['name']]['competitors'][] = "DROP";
+		$GLOBALS['shuffled']['events'][$event['name']]['drop'] = TRUE;	
+	}
+		
+	else while ( $GLOBALS['shuffled']['events'][$event['name']]['numcompetitors'] < $GLOBALS['shuffled']['events'][$event['name']]['numpeopleperteam']){
 		$GLOBALS['shuffled']['events'][$event['name']]['competitors'][] = "EMPTY";
 		$GLOBALS['shuffled']['events'][$event['name']]['numcompetitors']++; 
 	}
 }
 
 foreach ($GLOBALS['events'] as $event){ 
-	while ($GLOBALS['cats']['events'][$event['name']]['numcompetitors'] < $GLOBALS['cats']['events'][$event['name']]['numpeopleperteam']){
+	if ($GLOBALS['cats']['events'][$event['name']]['drop'] == FALSE){
+		$GLOBALS['cats']['events'][$event['name']]['competitors'][] = "DROP";
+		$GLOBALS['cats']['events'][$event['name']]['competitors'][] = "DROP";
+		$GLOBALS['cats']['events'][$event['name']]['drop'] = TRUE;	
+	}
+	else while ($GLOBALS['cats']['events'][$event['name']]['numcompetitors'] < $GLOBALS['cats']['events'][$event['name']]['numpeopleperteam']){
 		$GLOBALS['cats']['events'][$event['name']]['competitors'][] = "EMPTY";
 		$GLOBALS['cats']['events'][$event['name']]['numcompetitors']++; 
 	}
 }
+
+
 
 $output = array();
 foreach ($values as $row){
