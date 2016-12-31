@@ -256,6 +256,7 @@ foreach ($GLOBALS['ppl'] as $person){
 		echo $person['name'].'needmoe evets ';
 		if (isOnTeam($person, $GLOBALS['shuffled'])){
 			foreach ($person['eventrequests'] as $eventname){
+				if (!in_array ($eventname, $person['events']){
 				$event = $GLOBALS['events'][$eventname];
 				foreach ($GLOBALS['shuffled']['events'][$eventname]['competitors'] as $p){
 					$otherperson =  $GLOBALS['ppl'][$p]; 
@@ -264,12 +265,15 @@ foreach ($GLOBALS['ppl'] as $person){
 						removeFromEvent ($otherperson, $event, $GLOBALS['shuffled']);
 						addToEvent ($person, $event, $GLOBALS['shuffled']);	
 					}
+				}					
 				}
+
 			}			
 		}
 		
 		if (isOnTeam($person, $GLOBALS['cats'])){
 			foreach ($person['eventrequests'] as $eventname){
+				if (!in_array ($eventname, $person['events']){
 				$event = $GLOBALS['events'][$eventname];
 				foreach ($GLOBALS['cats']['events'][$eventname]['competitors'] as $p){
 					$otherperson =  $GLOBALS['ppl'][$p]; 
@@ -278,6 +282,7 @@ foreach ($GLOBALS['ppl'] as $person){
 						removeFromEvent ($otherperson, $event, $GLOBALS['cats']);
 						addToEvent ($person, $event, $GLOBALS['cats']);	
 					}
+				}
 				}
 			}			
 		}
