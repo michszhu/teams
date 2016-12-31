@@ -373,7 +373,7 @@ function isOnTeam ($person, $team){
 	return FALSE;
 }
 function isUnderEvented ($person){
-	if ($person['numevents'] < 4)
+	if ($person['numevents'] < 5)
 		return TRUE;
 	else{
 		// echo 'OVER EVENTED . ' . $person['numevents'] . $person['name'];
