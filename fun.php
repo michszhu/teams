@@ -259,7 +259,7 @@ foreach ($GLOBALS['ppl'] as $person){
 				foreach ($GLOBALS['shuffled']['events'][$eventname]['competitors'] as $p){
 					$otherperson =  $GLOBALS['ppl'][$p]; 
 					if ($otherperson['numevents'] > 3){
-						echo $person['name'].'hjkl ';
+						echo $otherperson['name'].'hjkl ';
 						removeFromEvent ($otherperson, $event, $GLOBALS['shuffled']);
 						addToEvent ($person, $event, $GLOBALS['shuffled']);	
 					}
@@ -272,7 +272,7 @@ foreach ($GLOBALS['ppl'] as $person){
 				foreach ($GLOBALS['cats']['events'][$eventname]['competitors'] as $p){
 					$otherperson =  $GLOBALS['ppl'][$p]; 
 					if ($otherperson['numevents'] > 3){
-						echo $person['name'].'hjkl ';
+						echo $otherperson['name'].'hjkl ';
 						removeFromEvent ($otherperson, $event, $GLOBALS['cats']);
 						addToEvent ($person, $event, $GLOBALS['cats']);	
 					}
