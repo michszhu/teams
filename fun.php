@@ -253,11 +253,14 @@ foreach ($GLOBALS['events'] as $event){
 // GIVE PEOPLE WITH 1 EVENT MORE EVENTS
 foreach ($GLOBALS['ppl'] as $person){ 
 	if ($person['numevents'] == 1){
+		echo $person['name'].'needmoe evets ';
 		if (isOnTeam($person, $GLOBALS['shuffled'])){
 			foreach ($person['eventrequests'] as $eventname){
 				foreach ($GLOBALS['shuffled']['events'][$eventname]['competitors'] as $p){
 					$otherperson =  $GLOBALS['ppl'][$p]; 
 					if ($otherperson['numevents'] > 3){
+						echo $person['name'].'hjkl ';
+					
 						$GLOBALS['shuffled']['events'][$eventname]['competitors'] = array_diff($GLOBALS['shuffled']['events'][$eventname]['competitors'], array($otherperson['name']) );
 						$GLOBALS['shuffled']['events'][$eventname]['competitors'][] = $person['name'];
 					}
@@ -270,6 +273,8 @@ foreach ($GLOBALS['ppl'] as $person){
 				foreach ($GLOBALS['cats']['events'][$eventname]['competitors'] as $p){
 					$otherperson =  $GLOBALS['ppl'][$p]; 
 					if ($otherperson['numevents'] > 3){
+												echo $person['name'].'hjkl ';
+
 						$GLOBALS['cats']['events'][$eventname]['competitors'] = array_diff($GLOBALS['shuffled']['events'][$eventname]['competitors'], array($otherperson['name']) );
 						$GLOBALS['cats']['events'][$eventname]['competitors'][] = $person['name'];
 					}
