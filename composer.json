@@ -2,4 +2,9 @@
     "require": {
         "google/apiclient": "2.0"
     }
+    require-dev: {
+         "codegyre/robo": "*"
+    }
+
 }
+
