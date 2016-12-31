@@ -259,10 +259,9 @@ foreach ($GLOBALS['ppl'] as $person){
 				foreach ($GLOBALS['shuffled']['events'][$eventname]['competitors'] as $p){
 					$otherperson =  $GLOBALS['ppl'][$p]; 
 					if ($otherperson['numevents'] > 3){
-						echo $otherperson['name'].$eventname.'hjkl ';
-					
-						$GLOBALS['shuffled']['events'][$eventname]['competitors'] = array_diff($GLOBALS['shuffled']['events'][$eventname]['competitors'], array($otherperson['name']) );
-						$GLOBALS['shuffled']['events'][$eventname]['competitors'][] = $person['name'];
+						echo $person['name'].'hjkl ';
+						removeFromEvent ($otherperson, $event, $GLOBALS['shuffled']);
+						addToEvent ($person, $event, $GLOBALS['shuffled']);	
 					}
 				}
 			}			
@@ -273,10 +272,9 @@ foreach ($GLOBALS['ppl'] as $person){
 				foreach ($GLOBALS['cats']['events'][$eventname]['competitors'] as $p){
 					$otherperson =  $GLOBALS['ppl'][$p]; 
 					if ($otherperson['numevents'] > 3){
-						echo $otherperson['name'].$eventname.'hjkl ';
-
-						$GLOBALS['cats']['events'][$eventname]['competitors'] = array_diff($GLOBALS['shuffled']['events'][$eventname]['competitors'], array($otherperson['name']) );
-						$GLOBALS['cats']['events'][$eventname]['competitors'][] = $person['name'];
+						echo $person['name'].'hjkl ';
+						removeFromEvent ($otherperson, $event, $GLOBALS['cats']);
+						addToEvent ($person, $event, $GLOBALS['cats']);	
 					}
 				}
 			}			
@@ -366,12 +364,17 @@ foreach ($GLOBALS['events'] as $event){  /// add memed events to memedevents
 	if (isEventOpen ($event, $GLOBALS['cats']))
 		$GLOBALS['cats']['memedevents'][] = $event['name'];
 }
+
+
 foreach ($GLOBALS['ppl'] as $person){ 
 	if ($person['numevents'] == 1){
 		echo 'someone memed ' . $person['name']; 
 		$GLOBALS['ppl']['thememed'][] = $person['name'];
 	}
 }
+
+
+
 function addToEvent ($person, $event, &$team){
 	if (isEventOpen($event, $team)  ) // if event needs more competitors
 		if ( !isTeamMaxed($team) || isOnTeam($person, $team))   { // if team is not over 15 people limit or if person is already on the team (already included in the 15)
@@ -409,7 +412,30 @@ function addToEvent ($person, $event, &$team){
 			if (isEventOpen($event, $team) == FALSE)  
 				closeEvent($event, $team);
 		}
-	//else closeEvent($event, $team);  
+}
+
+function removeFromEvent($person, $event, &$team){
+	$person = $GLOBALS['ppl'][$person['name']];
+	
+	$team['events'][$event['name']]['competitors'] = array_diff($team['events'][$event['name']]['competitors'], array($person['name']));
+	$team['events'][$event['name']]['numcompetitors'] = count ($team['events'][$event['name']]['competitors']);
+			
+	$person['events'] = array_diff($person['events'], $event['name']); 
+	$person['schedule'][$event['time']] = null;
+	$person['numevents'] = count ($person['events']);
+
+	$GLOBALS['ppl'][$person['name']]= $person; // set new persons info global
+	
+	$time = $event['time'];
+	foreach ($GLOBALS['events'] as $otherevents)
+		if ($otherevents['time']==$time ){
+					// echo "do". $otherevents['name'] . $person['name']. $time. "      "; 
+			$GLOBALS['events'][$otherevents['name']]['pool'][] = $person['name'];
+			$GLOBALS['events'][$otherevents['name']]['numpool'] = count ($GLOBALS['events'][$otherevents['name']]['pool']);				
+		}
+
+	openEvent($event, $team);
+
 }
 function enlist ($person, &$team){
 	$team['roster'][] = $person['name'];
@@ -443,6 +469,9 @@ function isEventOpen ($event, $team){
 }
 function closeEvent ($event, &$team){
 	$team ['events'][$event['name']]['open'] = FALSE;
+}
+function openEvent ($event, &$team){
+	$team ['events'][$event['name']]['open'] = TRUE;
 }
 function isTeamMaxed ($team){
 	if (count ($team['roster']) > 14){
