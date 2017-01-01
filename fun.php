@@ -355,23 +355,50 @@ foreach ($GLOBALS['events'] as $event){
 		foreach ($GLOBALS['shuffled']['roster'] as $name){
 			$person = $ppl [$name];
 			if (isScheduleOpen($person, $event) && $person['numevents']==2 ){
-					addToEvent ($person, $event, $GLOBALS['shuffled']);											
+					addToEvent ($person, $event, $GLOBALS['shuffled'], 1);											
 			}
+
 		}
 	}
 }
 foreach ($GLOBALS['events'] as $event){ 
 	if ( isEventOpen($event, $GLOBALS['cats']) == true){
 		shuffle ($GLOBALS['cats']['roster']);
-
 		foreach ($GLOBALS['cats']['roster'] as $name){
 			$person = $ppl [$name];
-			if (isScheduleOpen($person, $event) && $person['numevents']==2 ){
-					addToEvent ($person, $event, $GLOBALS['cats']);											
+			if (isScheduleOpen($person, $event) && $person['numevents'] == 2 ){
+					addToEvent ($person, $event, $GLOBALS['cats'], 1);											
 			}
+
 		}
 	}
 }
+
+foreach ($GLOBALS['events'] as $event){ 
+	if ( isEventOpen($event, $GLOBALS['shuffled']) == true){
+		shuffle ($GLOBALS['shuffled']['roster']);
+		foreach ($GLOBALS['shuffled']['roster'] as $name){
+			$person = $ppl [$name];
+			if (isScheduleOpen($person, $event) && $person['numevents']==3 ){
+					addToEvent ($person, $event, $GLOBALS['shuffled'], 2);											
+			}
+
+		}
+	}
+}
+foreach ($GLOBALS['events'] as $event){ 
+	if ( isEventOpen($event, $GLOBALS['cats']) == true){
+		shuffle ($GLOBALS['cats']['roster']);
+		foreach ($GLOBALS['cats']['roster'] as $name){
+			$person = $ppl [$name];
+			if (isScheduleOpen($person, $event) && $person['numevents'] == 3 ){
+					addToEvent ($person, $event, $GLOBALS['cats'], 2);											
+			}
+
+		}
+	}
+}
+
 $output = array();
 foreach ($values as $row){
 	if (isset ($row[1])) {
@@ -431,14 +458,19 @@ foreach ($GLOBALS['ppl'] as $person){
 
 
 
-function addToEvent ($person, $event, &$team){
+function addToEvent ($person, $event, &$team, $forced = null){
 	if (isEventOpen($event, $team)  ) // if event needs more competitors
 		if ( !isTeamMaxed($team) || isOnTeam($person, $team))   { // if team is not over 15 people limit or if person is already on the team (already included in the 15)
 			 // access person's info
 			$person = $GLOBALS['ppl'][$person['name']];
 			
 			 // add person to team event
-			$team['events'][$event['name']]['competitors'][] = $person['name'];
+			if ($forced == null)
+				$team['events'][$event['name']]['competitors'][] = $person['name'];
+			else if ($forced == 1)
+				$team['events'][$event['name']]['competitors'][] = '('.$person['name'].')';
+			else if ($forced == 2)
+				$team['events'][$event['name']]['competitors'][] = '(('.$person['name'].'))';			
 			$team['events'][$event['name']]['numcompetitors'] = count ($team['events'][$event['name']]['competitors']);
 			
 			// add event to person
@@ -536,7 +568,6 @@ function isTeamMaxed ($team){
 	}
 	return FALSE;
 }
-
 
  echo '<pre>'.json_encode ($GLOBALS['ppl'], JSON_PRETTY_PRINT); 
  echo json_encode ($GLOBALS['events'], JSON_PRETTY_PRINT);
