@@ -86,7 +86,7 @@ $results = $service->files->get($fileId);
 // echo "$body\n";
 // ADD PEOPLE AND INFO FROM SIGNUPS SHEET
 $service = new Google_Service_Sheets($client);
-$spreadsheetId =  $_POST['name']; //  '1LhCT9KRfMrXinRyphcBn1jz3JIUh5LQSli9mQFmOc7w';
+$spreadsheetId =  $_POST["name"]; //  '1LhCT9KRfMrXinRyphcBn1jz3JIUh5LQSli9mQFmOc7w';
 $range = 'signups!A1:D';
 $response = $service->spreadsheets_values->get($spreadsheetId, $range);
 $values = $response->getValues();
