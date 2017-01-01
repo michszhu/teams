@@ -1,7 +1,5 @@
 
 
-
-
 <?php
 
 /*
@@ -86,7 +84,7 @@ $results = $service->files->get($fileId);
 // echo "$body\n";
 // ADD PEOPLE AND INFO FROM SIGNUPS SHEET
 $service = new Google_Service_Sheets($client);
-$spreadsheetId =  $_POST["name"]; //  '1LhCT9KRfMrXinRyphcBn1jz3JIUh5LQSli9mQFmOc7w';
+$spreadsheetId =   '1LhCT9KRfMrXinRyphcBn1jz3JIUh5LQSli9mQFmOc7w';
 $range = 'signups!A1:D';
 $response = $service->spreadsheets_values->get($spreadsheetId, $range);
 $values = $response->getValues();
@@ -253,7 +251,7 @@ foreach ($GLOBALS['events'] as $event){
 
 
 // GIVE PEOPLE WITH 1 EVENT MORE EVENTS
-/*
+
 foreach ($GLOBALS['ppl'] as $person){ 
 	if ($person['numevents'] == 1){
 		echo $person['name'].'needmoe evets ';
@@ -264,7 +262,7 @@ foreach ($GLOBALS['ppl'] as $person){
 				foreach ($GLOBALS['shuffled']['events'][$event['name']]['competitors'] as $p){
 					if ($person['numevents'] == 1){
 					$otherperson =  $GLOBALS['ppl'][$p]; 
-					if ($otherperson['numevents'] > 3){
+					if ($otherperson['numevents'] > 2){
 						echo $otherperson['name'].'hjkl ';
 						removeFromEvent ($otherperson, $event, $GLOBALS['shuffled']);
 						addToEvent ($person, $event, $GLOBALS['shuffled']);	
@@ -299,7 +297,7 @@ foreach ($GLOBALS['ppl'] as $person){
 }
 
 echo 'nuext';
-*/
+
 // ADD EMPTYS or DROP
 foreach ($GLOBALS['events'] as $event){ 
 	if ($GLOBALS['shuffled']['events'][$event['name']]['numcompetitors'] == 0){
@@ -432,15 +430,15 @@ function addToEvent ($person, $event, &$team){
 function removeFromEvent($person, $event, &$team){
 	$person = $GLOBALS['ppl'][$person['name']];
 	
-	$team['events'][$event['name']]['competitors'] = array_diff($team['events'][$event['name']]['competitors'], array($person['name']));
+	echo json_encode($team['events'][$event['name']]['competitors'], JSON_PRETTY_PRINT) . ' minus ' . $person['name'];
+	// $team['events'][$event['name']]['competitors'] = array_diff($team['events'][$event['name']]['competitors'], array($person['name']));
 	$team['events'][$event['name']]['numcompetitors'] = count ($team['events'][$event['name']]['competitors']);
-			
+	
 	$person['events'] = array_diff($person['events'], array($event['name'])); 
 	$person['schedule'][$event['time']] = null;
 	$person['numevents'] = count ($person['events']); 
 
-	$GLOBALS['ppl'][$person['name']] = $person; // set new persons info global
-	
+	$GLOBALS['ppl'][$person['name']] = $person;
 	
 	$time = $event['time'];
 	foreach ($GLOBALS['events'] as $otherevents)
@@ -449,9 +447,7 @@ function removeFromEvent($person, $event, &$team){
 			$GLOBALS['events'][$otherevents['name']]['pool'][] = $person['name'];
 			$GLOBALS['events'][$otherevents['name']]['numpool'] = count ($GLOBALS['events'][$otherevents['name']]['pool']);				
 		}
-		
-		
-
+	
 	openEvent($event, $team);
 }
 function enlist ($person, &$team){
@@ -498,7 +494,8 @@ function isTeamMaxed ($team){
 	return FALSE;
 }
 
-echo '<pre>'.json_encode ($GLOBALS['ppl'], JSON_PRETTY_PRINT); 
+/*
+ echo '<pre>'.json_encode ($GLOBALS['ppl'], JSON_PRETTY_PRINT); 
  echo json_encode ($GLOBALS['events'], JSON_PRETTY_PRINT);
  echo 'TEAM shuffled' . json_encode ($GLOBALS['shuffled'], JSON_PRETTY_PRINT);
  echo 'TEAM cats' . json_encode ($GLOBALS['cats'], JSON_PRETTY_PRINT);
@@ -512,4 +509,3 @@ echo '<pre>'.json_encode ($GLOBALS['ppl'], JSON_PRETTY_PRINT);
    // echo json_encode ($GLOBALS['ppl']['thememed'], JSON_PRETTY_PRINT);
  echo 'CANCER: MATT MILAD' . '</pre>';  //  ends up in both teams...   */
 ?>
-
