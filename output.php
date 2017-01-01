@@ -1,8 +1,8 @@
 <?php
-define('__ROOT__', dirname(dirname(__FILE__))); 
-require_once(__ROOT__.'teams/input.php'); 
+require_once(realpath(dirname(__FILE__) .'teams/input.php'); 
 
-require_once(__ROOT__.'teams/addcats.php'); 
+
+require_once(realpath(dirname(__FILE__) .'teams/addcats.php'); 
 
 
 $output = array();
