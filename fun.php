@@ -255,6 +255,7 @@ foreach ($GLOBALS['events'] as $event){
 foreach ($GLOBALS['ppl'] as $person){ 
 	if ($person['numevents'] == 1){
 		echo $person['name'].'needmoe evets ';
+		
 		if (isOnTeam($person, $GLOBALS['shuffled'])){
 			foreach ($person['eventrequests'] as $eventname){
 				if (!in_array ($eventname, $person['events'])){
@@ -262,16 +263,16 @@ foreach ($GLOBALS['ppl'] as $person){
 				foreach ($GLOBALS['shuffled']['events'][$event['name']]['competitors'] as $p){
 					if ($person['numevents'] == 1){
 					$otherperson =  $GLOBALS['ppl'][$p]; 
-					if ($otherperson['numevents'] > 2){
-						echo $otherperson['name'].'hjkl ';
-						removeFromEvent ($otherperson, $event, $GLOBALS['shuffled']);
-						addToEvent ($person, $event, $GLOBALS['shuffled']);	
+						if ($otherperson['numevents'] > 2)
+							$persontoswitch = $otherperson; 
 					}
-					}
-				}					
+				}
+					
 				}
 
-			}			
+			}
+			removeFromEvent ($persontoswitch, $event, $GLOBALS['shuffled']);
+			addToEvent ($person, $event, $GLOBALS['shuffled']);				
 		}
 		
 		if (isOnTeam($person, $GLOBALS['cats'])){
@@ -281,15 +282,15 @@ foreach ($GLOBALS['ppl'] as $person){
 				foreach ($GLOBALS['cats']['events'][$event['name']]['competitors'] as $p){
 					if ($person['numevents'] == 1){
 					$otherperson =  $GLOBALS['ppl'][$p]; 
-					if ($otherperson['numevents'] > 3){
-						echo $otherperson['name'].'hjkl ';
-						removeFromEvent ($otherperson, $event, $GLOBALS['cats']);
-						addToEvent ($person, $event, $GLOBALS['cats']);	
-					}
+						if ($otherperson['numevents'] > 2)
+							$persontoswitch = $otherperson; 
 					}
 				}
+				
 				}
-			}			
+			}
+			removeFromEvent ($otherperson, $event, $GLOBALS['cats']);
+			addToEvent ($person, $event, $GLOBALS['cats']);					
 		}
 	
 
@@ -494,7 +495,7 @@ function isTeamMaxed ($team){
 	return FALSE;
 }
 
-/*
+
  echo '<pre>'.json_encode ($GLOBALS['ppl'], JSON_PRETTY_PRINT); 
  echo json_encode ($GLOBALS['events'], JSON_PRETTY_PRINT);
  echo 'TEAM shuffled' . json_encode ($GLOBALS['shuffled'], JSON_PRETTY_PRINT);
@@ -507,5 +508,5 @@ function isTeamMaxed ($team){
   //echo json_encode ($GLOBALS['shuffled']['memedevents'], JSON_PRETTY_PRINT);
   // echo json_encode ($GLOBALS['cats']['memedevents'], JSON_PRETTY_PRINT);
    // echo json_encode ($GLOBALS['ppl']['thememed'], JSON_PRETTY_PRINT);
- echo 'CANCER: MATT MILAD' . '</pre>';  //  ends up in both teams...   */
+ echo 'CANCER: MATT MILAD' . '</pre>';  //  ends up in both teams...   
 ?>
