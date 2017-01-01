@@ -1,8 +1,8 @@
 <?php
 define('__ROOT__', dirname(dirname(__FILE__))); 
-require_once(__ROOT__.'/input.php'); 
+require_once(__ROOT__.'/zhu/input.php'); 
 
-require_once(__ROOT__.'/addcats.php'); 
+require_once(__ROOT__.'/zhu/addcats.php'); 
 
 
 $output = array();
