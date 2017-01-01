@@ -2,6 +2,16 @@
 
 <?php
 
+/*
+// simple execution
+$this->taskGulpRun()->run();
+
+// run task 'clean' with --silent option
+$this->taskGulpRun('clean')
+     ->silent()
+     ->run();
+     
+     */
 
 // apitest.php
 // by Karl Kranich - karl.kranich.org
@@ -239,7 +249,7 @@ foreach ($GLOBALS['events'] as $event){
 	}
 }
 
-
+/*
 // GIVE PEOPLE WITH 1 EVENT MORE EVENTS
 
 foreach ($GLOBALS['ppl'] as $person){ 
@@ -258,14 +268,15 @@ foreach ($GLOBALS['ppl'] as $person){
 							$persontoswitch = $otherperson; 
 					}
 				}
-			/*	if (!isset($persontoswitch))
+				/*
+				if (!isset($persontoswitch))
 				foreach ($GLOBALS['shuffled']['events'][$event['name']]['competitors'] as $p){
 					if ($person['numevents'] == 1){
 					$otherperson =  $GLOBALS['ppl'][$p]; 
 						if ($otherperson['numevents'] > 2)
 							$persontoswitch = $otherperson; 
 					}
-				}			*/		
+				}			
 					
 				}
 
@@ -294,7 +305,7 @@ foreach ($GLOBALS['ppl'] as $person){
 						if ($otherperson['numevents'] > 2)
 							$persontoswitch = $otherperson; 
 					}
-				}		*/
+				}		
 				
 				}
 			}
@@ -305,8 +316,8 @@ foreach ($GLOBALS['ppl'] as $person){
 
 	}
 }
-
-echo 'nuext';
+*/
+/*
 
 // ADD EMPTYS or DROP
 foreach ($GLOBALS['events'] as $event){ 
@@ -333,12 +344,34 @@ foreach ($GLOBALS['events'] as $event){
 		$GLOBALS['cats']['events'][$event['name']]['numcompetitors']++; 
 	}
 }
+*/
 
 
 // FILL IN EMPTY SPOTS WITH UNVOLUNTARY ADDITIONS
 
+foreach ($GLOBALS['events'] as $event){ 
+	if ( isEventOpen($event, $GLOBALS['shuffled']) == true){
+		shuffle ($GLOBALS['shuffled']['roster']);
+		foreach ($GLOBALS['shuffled']['roster'] as $name){
+			$person = $ppl [$name];
+			if (isScheduleOpen($person, $event) && $person['numevents']==2 ){
+					addToEvent ($person, $event, $GLOBALS['shuffled']);											
+			}
+		}
+	}
+}
+foreach ($GLOBALS['events'] as $event){ 
+	if ( isEventOpen($event, $GLOBALS['cats']) == true){
+		shuffle ($GLOBALS['cats']['roster']);
 
-
+		foreach ($GLOBALS['cats']['roster'] as $name){
+			$person = $ppl [$name];
+			if (isScheduleOpen($person, $event) && $person['numevents']==2 ){
+					addToEvent ($person, $event, $GLOBALS['cats']);											
+			}
+		}
+	}
+}
 $output = array();
 foreach ($values as $row){
 	if (isset ($row[1])) {
