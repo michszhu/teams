@@ -1,5 +1,7 @@
 
 
+
+
 <?php
 
 /*
@@ -251,19 +253,22 @@ foreach ($GLOBALS['events'] as $event){
 
 
 // GIVE PEOPLE WITH 1 EVENT MORE EVENTS
+/*
 foreach ($GLOBALS['ppl'] as $person){ 
 	if ($person['numevents'] == 1){
 		echo $person['name'].'needmoe evets ';
 		if (isOnTeam($person, $GLOBALS['shuffled'])){
 			foreach ($person['eventrequests'] as $eventname){
-				if (!in_array ($eventname, $person['events']){
+				if (!in_array ($eventname, $person['events'])){
 				$event = $GLOBALS['events'][$eventname];
-				foreach ($GLOBALS['shuffled']['events'][$eventname]['competitors'] as $p){
+				foreach ($GLOBALS['shuffled']['events'][$event['name']]['competitors'] as $p){
+					if ($person['numevents'] == 1){
 					$otherperson =  $GLOBALS['ppl'][$p]; 
 					if ($otherperson['numevents'] > 3){
 						echo $otherperson['name'].'hjkl ';
 						removeFromEvent ($otherperson, $event, $GLOBALS['shuffled']);
 						addToEvent ($person, $event, $GLOBALS['shuffled']);	
+					}
 					}
 				}					
 				}
@@ -273,14 +278,16 @@ foreach ($GLOBALS['ppl'] as $person){
 		
 		if (isOnTeam($person, $GLOBALS['cats'])){
 			foreach ($person['eventrequests'] as $eventname){
-				if (!in_array ($eventname, $person['events']){
+				if (!in_array ($eventname, $person['events'])){
 				$event = $GLOBALS['events'][$eventname];
-				foreach ($GLOBALS['cats']['events'][$eventname]['competitors'] as $p){
+				foreach ($GLOBALS['cats']['events'][$event['name']]['competitors'] as $p){
+					if ($person['numevents'] == 1){
 					$otherperson =  $GLOBALS['ppl'][$p]; 
 					if ($otherperson['numevents'] > 3){
 						echo $otherperson['name'].'hjkl ';
 						removeFromEvent ($otherperson, $event, $GLOBALS['cats']);
 						addToEvent ($person, $event, $GLOBALS['cats']);	
+					}
 					}
 				}
 				}
@@ -291,7 +298,8 @@ foreach ($GLOBALS['ppl'] as $person){
 	}
 }
 
-
+echo 'nuext';
+*/
 // ADD EMPTYS or DROP
 foreach ($GLOBALS['events'] as $event){ 
 	if ($GLOBALS['shuffled']['events'][$event['name']]['numcompetitors'] == 0){
@@ -427,11 +435,12 @@ function removeFromEvent($person, $event, &$team){
 	$team['events'][$event['name']]['competitors'] = array_diff($team['events'][$event['name']]['competitors'], array($person['name']));
 	$team['events'][$event['name']]['numcompetitors'] = count ($team['events'][$event['name']]['competitors']);
 			
-	$person['events'] = array_diff($person['events'], $event['name']); 
+	$person['events'] = array_diff($person['events'], array($event['name'])); 
 	$person['schedule'][$event['time']] = null;
-	$person['numevents'] = count ($person['events']);
+	$person['numevents'] = count ($person['events']); 
 
-	$GLOBALS['ppl'][$person['name']]= $person; // set new persons info global
+	$GLOBALS['ppl'][$person['name']] = $person; // set new persons info global
+	
 	
 	$time = $event['time'];
 	foreach ($GLOBALS['events'] as $otherevents)
@@ -440,9 +449,10 @@ function removeFromEvent($person, $event, &$team){
 			$GLOBALS['events'][$otherevents['name']]['pool'][] = $person['name'];
 			$GLOBALS['events'][$otherevents['name']]['numpool'] = count ($GLOBALS['events'][$otherevents['name']]['pool']);				
 		}
+		
+		
 
 	openEvent($event, $team);
-
 }
 function enlist ($person, &$team){
 	$team['roster'][] = $person['name'];
@@ -488,7 +498,7 @@ function isTeamMaxed ($team){
 	return FALSE;
 }
 
- echo '<pre>'.json_encode ($GLOBALS['ppl'], JSON_PRETTY_PRINT); 
+echo '<pre>'.json_encode ($GLOBALS['ppl'], JSON_PRETTY_PRINT); 
  echo json_encode ($GLOBALS['events'], JSON_PRETTY_PRINT);
  echo 'TEAM shuffled' . json_encode ($GLOBALS['shuffled'], JSON_PRETTY_PRINT);
  echo 'TEAM cats' . json_encode ($GLOBALS['cats'], JSON_PRETTY_PRINT);
@@ -500,5 +510,6 @@ function isTeamMaxed ($team){
   //echo json_encode ($GLOBALS['shuffled']['memedevents'], JSON_PRETTY_PRINT);
   // echo json_encode ($GLOBALS['cats']['memedevents'], JSON_PRETTY_PRINT);
    // echo json_encode ($GLOBALS['ppl']['thememed'], JSON_PRETTY_PRINT);
- echo 'CANCER: MATT MILAD' . '</pre>';  //  ends up in both teams...   
+ echo 'CANCER: MATT MILAD' . '</pre>';  //  ends up in both teams...   */
 ?>
+
