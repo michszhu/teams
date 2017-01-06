@@ -1,8 +1,8 @@
 <?php
-require_once __DIR__ . 'teams/input.php'; 
+require_once realpath(dirname(__FILE__) . '/input.php'); 
 
 
-require_once __DIR__ .'teams/addcats.php'; 
+require_once realpath(dirname(__FILE__) .'/addcats.php'); 
 
 
 $output = array();
