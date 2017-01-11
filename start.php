@@ -1,4 +1,28 @@
+<!DOCTYPE HTML>
+<html>  
+	
+<head>
+
+<link rel="stylesheet" type="text/css" href="style.css">	
+	
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<script type="text/javascript">
+$(window).load(function() {
+	$(".loader").fadeOut("slow");
+})
+</script>
+
+	
+</head>
+	
+<body>
+<div class="loader"></div>
+
+
+
 <?php
+
+
 
 
 // INPUT
@@ -585,3 +609,7 @@ foreach ($GLOBALS['ppl'] as $person){
 	}
 }
 ?>
+
+	
+	</body>
+</html>
