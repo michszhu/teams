@@ -7,8 +7,13 @@
 
 <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
 <script type="text/javascript">
-$('#submit').onClick(function(){
-	$(".loader").fadeOut("slow");
+$('#submit').click(function(){
+  $('#img').show(); //<----here
+  $.ajax({
+    ....
+   success:function(result){
+       $('#img').hide();  //<--- hide again
+   }
 }
 </script>
 	
@@ -16,8 +21,8 @@ $('#submit').onClick(function(){
 	
 <body>
 
-<div class="loader"></div>
-	
+<img src="'https://d13yacurqjgara.cloudfront.net/users/160117/screenshots/3197970/main.gif'" id="img" style="display:none"/ >
+
 <form action="start.php" method="post">
 google sheets ID : <input type="text" name="name"><br>
 use format www.docs.google.com/spreadsheets/d/1LhCT9KRfMrXinRyphcBn1jz3JIUh5LQSli9mQFmOc7w/edit#gid=1408926158
