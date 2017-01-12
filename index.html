@@ -17,6 +17,13 @@ use format www.docs.google.com/spreadsheets/d/1LhCT9KRfMrXinRyphcBn1jz3JIUh5LQSl
 <input type="submit" id = "submit">
 </form>
 	
+<script>
+	// All browsers
+document.getElementsByTagName( "html" )[0].className.replace( /loading/, "" );
+
+// Or with jQuery
+$( "html" ).removeClass( "loading" );
+	</script>
 	
 </body>
 </html>
