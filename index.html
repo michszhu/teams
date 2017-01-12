@@ -7,7 +7,7 @@
 
 <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
 <script type="text/javascript">
-$('#submit').click(function(){
+$('#submit').onClick(function(){
   $('#img').show(); //<----here
   $.ajax({
     ....
@@ -21,16 +21,17 @@ $('#submit').click(function(){
 	
 <body>
 
-<img src="'https://d13yacurqjgara.cloudfront.net/users/160117/screenshots/3197970/main.gif'" id="img" style="display:none"/ >
+<img src="https://d13yacurqjgara.cloudfront.net/users/160117/screenshots/3197970/main.gif" id="img" style="display:none"/ >
 
 <form action="start.php" method="post">
 google sheets ID : <input type="text" name="name"><br>
 use format www.docs.google.com/spreadsheets/d/1LhCT9KRfMrXinRyphcBn1jz3JIUh5LQSli9mQFmOc7w/edit#gid=1408926158
 
-	
-	<button type="button" id = "submit">Click Me!</button>
 
-<input type="submit">
+<input type="submit" id = "submit">
+	
+	
+	
 </form>
 	
 	
