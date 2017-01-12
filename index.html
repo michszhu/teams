@@ -1,6 +1,10 @@
 <!DOCTYPE html>
-<html>
+<html class="loading">
 
+	<head>
+		<link rel="stylesheet" type="text/css" href="style.php">
+	
+	</head>
 
 <body>		
 	
@@ -14,15 +18,5 @@ use format www.docs.google.com/spreadsheets/d/1LhCT9KRfMrXinRyphcBn1jz3JIUh5LQSl
 </form>
 	
 	
-<script>
-	$(function() {
-    $("#submit").click(function() {
-        $("#dvloader").show();
-        $("body").load("start.php", function(){ $("#dvloader").hide(); });
-        return false;
-    });
-});
-	</script>
-
 </body>
 </html>
