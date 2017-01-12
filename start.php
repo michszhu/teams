@@ -8,14 +8,7 @@
 <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
 <script type="text/javascript">
 $(window).load(function() {
-	$(".box").fadeOut("slow");
-	$(".cat").fadeOut("slow");
-	$(".cat__body").fadeOut("slow");
-	$(".cat__body").fadeOut("slow");
-	$(".cat__tail").fadeOut("slow");
-	$(".cat__head").fadeOut("slow");
-
-	
+	$(".loader").fadeOut("slow");
 })
 </script>
 
@@ -23,8 +16,8 @@ $(window).load(function() {
 </head>
 	
 <body>
-<div class="loader"></div>
 
+<div class="loader"></div>
 
 
 <?php
