@@ -4,18 +4,6 @@
 <head>
 
 <link rel="stylesheet" type="text/css" href="style.css">
-
-<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
-<script type="text/javascript">
-$('#submit').click(function(){
-  $('#img').show(); //<----here
-  $.ajax({
-    
-   success:function(result){
-       $('#img').hide();  //<--- hide again
-   }
-}
-</script>
 	
 </head>
 	
@@ -25,7 +13,7 @@ $('#submit').click(function(){
 
 <form action="start.php" method="post">
 google sheets ID : <input type="text" name="name"><br>
-<input type="submit" id = "submit">	
+<input type="submit" onclick  = "document.getElementById('img').style.display = 'none'">	
 </form>
 	
 	
