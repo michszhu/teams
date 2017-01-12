@@ -5,17 +5,24 @@
 
 <link rel="stylesheet" type="text/css" href="style.css">
 
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<script type="text/javascript">
+function load() {
+	$(".loader").fadeOut("slow");
+}
+</script>
 	
 </head>
 	
 <body>
 
+<div class="loader"></div>
 	
 <form action="start.php" method="post">
 google sheets ID : <input type="text" name="name"><br>
 use format www.docs.google.com/spreadsheets/d/1LhCT9KRfMrXinRyphcBn1jz3JIUh5LQSli9mQFmOc7w/edit#gid=1408926158
 
-<input type="submit" id = "submit">
+<input type="submit" onClick = "load()">
 </form>
 	
 	
