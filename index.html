@@ -1,15 +1,24 @@
-<!DOCTYPE html>
-<html class="loading">
-
-	<head>
-		<link rel="stylesheet" type="text/css" href="style.php">
+<!DOCTYPE HTML>
+<html>  
 	
-	</head>
+<head>
 
-<body>		
+<link rel="stylesheet" type="text/css" href="style.css">	
 	
-<div style="display:none" id="dvloader"><img src="www.d13yacurqjgara.cloudfront.net/users/160117/screenshots/3197970/main.gif" /></div>
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<script type="text/javascript">
+$(window).load(function() {
+	$(".loader").fadeOut("slow");
+})
+</script>
 
+	
+</head>
+	
+<body>
+
+<div class="loader"></div>
+	
 <form action="start.php" method="post">
 google sheets ID : <input type="text" name="name"><br>
 use format www.docs.google.com/spreadsheets/d/1LhCT9KRfMrXinRyphcBn1jz3JIUh5LQSli9mQFmOc7w/edit#gid=1408926158
@@ -17,13 +26,6 @@ use format www.docs.google.com/spreadsheets/d/1LhCT9KRfMrXinRyphcBn1jz3JIUh5LQSl
 <input type="submit" id = "submit">
 </form>
 	
-<script>
-	// All browsers
-document.getElementsByTagName( "html" )[0].className.replace( /loading/, "" );
-
-// Or with jQuery
-$( "html" ).removeClass( "loading" );
-	</script>
 	
 </body>
 </html>
