@@ -1,41 +1,42 @@
 <!DOCTYPE html>
-<html class="no-js">
+<html>
 
-<head>
-	<meta charset='UTF-8'>
+<head>	
 	
-	<title>Simple Loader</title>
-	
-	<link rel="stylesheet" type="text/css" href="style.css">	
 	
 	<style>
-		/* This only works with JavaScript, 
-		   if it's not present, don't show loader */
-  #loader { display: none; background:#000; }
-     #loader { display: block; position: absolute; left: 100px; top: 0;background:#000; }
+/* Paste this css to your style sheet file or under head tag */
+/* This only works with JavaScript, 
+if it's not present, don't show loader */
+.no-js #loader { display: none;  }
+.js #loader { display: block; position: absolute; left: 100px; top: 0; }
+.se-pre-con {
+	position: fixed;
+	left: 0px;
+	top: 0px;
+	width: 100%;
+	height: 100%;
+	z-index: 9999;
+	background: url('https://d13yacurqjgara.cloudfront.net/users/160117/screenshots/3197970/main.gif') center no-repeat #fff;
+}
 	</style>
+
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.5.2/jquery.min.js"></script>
+<script src="http://cdnjs.cloudflare.com/ajax/libs/modernizr/2.8.2/modernizr.js"></script>
+
+//paste this code under the head tag or in a separate js file.
+	// Wait for window load
+	$(window).load(function() {
+		// Animate loader off screen
+		$(".se-pre-con").fadeOut("slow");;
+	});
 	
 
-	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.5.2/jquery.min.js"></script>
-	
-	
-	<script src="https://github.com/Modernizr/Modernizr/raw/master/modernizr.js"></script>
-	<script>
-		// Wait for window load
-		$(window).load(function() {
-			// Animate loader off screen
-			$("#loader").animate({
-				top: -200
-			}, 1500);
-		});
-	</script>	
 </head>
 
 <body>
+	<div class="se-pre-con"></div>
 		
-	
-	<img src="https://d13yacurqjgara.cloudfront.net/users/160117/screenshots/3197970/main.gif" id="loader">
-	
 	
 <form action="start.php" method="post">
 google sheets ID : <input type="text" name="name"><br>
