@@ -7,7 +7,7 @@
 
 <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
 <script type="text/javascript">
-function load() {
+$('#submit').onClick(function(){
 	$(".loader").fadeOut("slow");
 }
 </script>
@@ -22,7 +22,7 @@ function load() {
 google sheets ID : <input type="text" name="name"><br>
 use format www.docs.google.com/spreadsheets/d/1LhCT9KRfMrXinRyphcBn1jz3JIUh5LQSli9mQFmOc7w/edit#gid=1408926158
 
-<input type="submit" onClick = "load()">
+<input type="submit" id = "submit">
 </form>
 	
 	
