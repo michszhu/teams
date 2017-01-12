@@ -11,8 +11,8 @@
 	<style>
 		/* This only works with JavaScript, 
 		   if it's not present, don't show loader */
-		.no-js #loader { display: none;  }
-		.js #loader { display: block; position: absolute; left: 100px; top: 0; }
+  #loader { display: none; background:#000; }
+     #loader { display: block; position: absolute; left: 100px; top: 0;background:#000; }
 	</style>
 	
 
@@ -37,10 +37,6 @@
 	<img src="https://d13yacurqjgara.cloudfront.net/users/160117/screenshots/3197970/main.gif" id="loader">
 	
 	
-	<img src="//farm6.static.flickr.com/5299/5400751421_55d49b2786_o.jpg">
-		
-
-
 <form action="start.php" method="post">
 google sheets ID : <input type="text" name="name"><br>
 use format https://docs.google.com/spreadsheets/d/1LhCT9KRfMrXinRyphcBn1jz3JIUh5LQSli9mQFmOc7w/edit#gid=1408926158
